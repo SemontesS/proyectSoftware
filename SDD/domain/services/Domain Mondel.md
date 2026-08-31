@@ -615,7 +615,7 @@ Comprador
 
 # Resumen
 
-Las principales clases del dominio de Ecommerce son:
+Las principales clases del dominio de Ecommerce son: 
 
 ``` text
 Usuario (Abstracto)
