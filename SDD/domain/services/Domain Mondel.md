@@ -1,100 +1,103 @@
-# Modelo de Dominio
+# Domain Model -- Ecommerce
 
 ## Introducción
 
-NexusMarket es una plataforma digital centralizada diseñada para actuar como intermediario comercial entre compradores y vendedores. El propósito principal de la plataforma es administrar de manera integral todo el ciclo de la operación e-commerce: desde la incorporación de usuarios y el catálogo de productos hasta el control de existencias, la logística de envíos, la facturación y los servicios posventa (devoluciones y reembolsos), garantizando la trazabilidad y la correcta coordinación entre todos los participantes del ecosistema
+El Modelo de Dominio de Ecommerce representa los principales elementos
+que participan en la operación de la plataforma y la forma en que se
+relacionan entre sí. El sistema funciona como un marketplace que conecta
+compradores y vendedores, permitiendo gestionar productos, inventario,
+carritos, pedidos, facturación, envíos, devoluciones y reembolsos.
 
-Básicamente el modelo se divide en estos grupos:
+El modelo permite visualizar la información principal del negocio y
+entender cómo se desarrolla el proceso desde que un producto es
+publicado hasta que una compra es entregada o, cuando corresponde, se
+realiza una devolución y un reembolso.
 
-* **Usuarios**, que son las personas que usan la plataforma, ya sea comprando o vendiendo.
-* **Compradores y Vendedores**, que son las dos "caras" que puede tener un usuario según lo que hace en el sistema.
-* **Productos e Inventario**, o sea, lo que se vende y cómo se controla cuánto queda disponible.
-* **Carritos y Pedidos**, que son el camino que recorre una compra desde que el comprador empieza a agregar cosas hasta que confirma todo.
-  
-* **Postventa**, que agrupa todo lo que pasa después de comprar: la factura, el envío, y si algo sale mal, la devolución y el reembolso.
+La estructura se organiza alrededor de `Usuario`, `Producto`, `Bodega`,
+`Inventario`, `Carrito` y `Pedido`, junto con los elementos que apoyan
+el proceso comercial y logístico.
 
-En resumen: un vendedor publica productos y los guarda en una o varias bodegas. Un comprador va llenando un carrito, y cuando confirma, ese carrito se convierte en un pedido. Ese pedido genera una factura, puede necesitar un envío, y si el comprador no queda conforme, puede terminar en una devolución (y de ahí, en un reembolso).
+------------------------------------------------------------------------
 
----
+# Domain Class Hierarchy
 
-# Jerarquía de Clases
-
-```text
-usuario (Abstracta)
+``` text
+Usuario (Abstracto)
 ├── Comprador
 └── Vendedor
 
-Producto
-Inventario
-Bodega
-
-Carrito
-├── ItemCarrito
-
-Pedido
-├── LineaPedido
-
-Factura
-Envio
-Devolucion
-Reembolso
+Roles de Usuario:
+├── Comprador
+├── Vendedor
+├── Administrador
+├── Operador Logístico
+└── Supervisor
 ```
 
----
+`Usuario` concentra la información común de las personas que participan
+en la plataforma. `Comprador` y `Vendedor` representan especializaciones
+con información propia según la actividad que realizan dentro del
+marketplace.
 
-# Relaciones del Dominio
+Los roles de Administrador, Operador Logístico y Supervisor representan
+responsabilidades dentro del sistema y se encuentran definidos mediante
+el atributo `rolUsuario`.
 
-```text
-usuario
+------------------------------------------------------------------------
+
+# Domain Relationships
+
+``` text
+Usuario
    │
    ├── Comprador
+   │      │
+   │      ├── utiliza ─────────> Carrito
+   │      │                         │
+   │      │                         └── contiene ──> ItemCarrito
+   │      │                                           │
+   │      │                                           └── corresponde ──> Producto
+   │      │
+   │      └── realiza ─────────> Pedido
+   │                                  │
+   │                                  ├── contiene ──> LineaPedido
+   │                                  │                    │
+   │                                  │                    └── corresponde ──> Producto
+   │                                  │
+   │                                  ├── genera ─────> Factura
+   │                                  ├── requiere ────> Envio
+   │                                  └── puede originar ──> Devolucion
+   │                                                           │
+   │                                                           └── genera ──> Reembolso
    │
    └── Vendedor
-
-Comprador
-   │
-   └── utiliza (1 → 0..1) ──────────────> Carrito
-
-Carrito
-   ├── contiene (1 → 0..*) ─────────────> ItemCarrito
-   │                                          └── corresponde (0..* → 1) ──> Producto
-   │
-   └── confirma (1 → 0..1) ─────────────> Pedido
-
-Pedido
-   ├── Contiene (1 → 1..*) ──────────────> LineaPedido
-   │                                          └── corresponde ─────────────> Producto
-   │
-   ├── corresponde (1 → 1) ──────────────> Producto
-   ├── genera (1 → 1) ───────────────────> Factura
-   ├── requiere si aplica (1 → 0..1) ────> Envio
-   └── posible devolucion (1 → 0..*) ────> Devolucion
-                                              └── genera (1 → 0..1) ────────> Reembolso
-
-Vendedor
-   ├── publica (1 → 0..*) ───────────────> Producto
-   │                                          └── tiene (1 → 0..*) ────────> Inventario
-   │
-   └── tiene (1 → 0..*) ─────────────────> Bodega
-                                              ├── almacenar ────────────────> Inventario
-                                              └── despacha (1 → 0..*) ──────> Envio
+          │
+          ├── publica ──────> Producto
+          │                     │
+          │                     └── tiene ──> Inventario
+          │
+          └── tiene ────────> Bodega
+                                  │
+                                  ├── almacena ──> Inventario
+                                  └── despacha ──> Envio
 ```
 
----
+------------------------------------------------------------------------
 
-# Entidades
+# Entities
 
----
+## Usuario (Abstracto)
 
-# usuario (Abstracta)
+### Descripción
 
+`Usuario` representa a las personas que interactúan con Ecommerce. Es
+una clase abstracta porque reúne la información común que necesitan los
+diferentes participantes de la plataforma.
 
+La información del usuario permite identificarlo y conocer su rol y
+estado dentro del sistema.
 
-Es la clase base que representa a cualquier persona que use la plataforma. Aquí se guarda lo básico que todos los usuarios tienen en común, sin importar si son comprador o vendedor: nombre, correo, rol y estado de la cuenta.
-
-Como es abstracta, nunca se crea un "usuario" directamente; siempre va a ser un Comprador o un Vendedor.
-
-## Atributos
+### Atributos
 
 | Atributo   | Tipo   |Descripción                                              |
 | ---------- | ------ | ------------------------------------------------------------ |
@@ -104,22 +107,30 @@ Como es abstracta, nunca se crea un "usuario" directamente; siempre va a ser un 
 | rolUsuario | String | Define las responsabilidades y permisos.                          |
 | Estado | String | Condición operativa (Activo, Bloqueado, etc.). |
 
-## Relaciones
+### Relaciones
 
-* Un `usuario` se puede especializar como `Comprador`.
-* Un `usuario` se puede especializar como `Vendedor`.
+-   Se especializa en `Comprador` y `Vendedor`.
+-   El atributo `rolUsuario` permite determinar las responsabilidades
+    del usuario.
+-   Cada usuario tiene un único rol dentro del sistema.
 
----
+------------------------------------------------------------------------
 
-# Comprador
+## Comprador
 
-Es el usuario que compra en la plataforma. Va agregando productos a su carrito y, cuando confirma, ese carrito pasa a ser un pedido. Puede tener varias direcciones guardadas para recibir sus compras.
+### Descripción
 
-## Hereda de
+El `Comprador` representa a la persona que utiliza Ecommerce para
+consultar productos, agregarlos al carrito y realizar compras.
 
-`usuario`
+También cuenta con información relacionada con sus direcciones y su
+estado comercial.
 
-## Atributos
+### hereda de
+
+`Usuario`
+
+### Atributos
 
 | Atributo            | Tipo           |Descripción                                  |
 | ------------------- | -------------- | -------------------------------------------------- |
@@ -127,39 +138,81 @@ Es el usuario que compra en la plataforma. Va agregando productos a su carrito y
 | direccionAdicional  | List\<String\> | Ubicaciones secundarias de entrega.     |
 | estadoComprador     | String         | Condición del comprador para realizar compras.            |
 
-## Relaciones
+### Relaciones
 
-* Un comprador usa un `Carrito` a la vez (`utiliza`, 1 → 0..1).
+-   Utiliza cero o un `Carrito` activo.
+-   Realiza cero o más `Pedido`.
+-   Cada comprador puede manejar una dirección principal y direcciones
+    adicionales.
 
----
+------------------------------------------------------------------------
 
-# Vendedor
+## Vendedor
 
-Es el usuario que publica productos para vender y que administra el inventario a través de sus bodegas.
+### Descripción
 
-## Hereda de
+El `Vendedor` representa a la persona responsable de registrar y
+administrar los productos que comercializa dentro de Ecommerce.
 
-`usuario`
+Los vendedores son incorporados administrativamente y trabajan con las
+bodegas asociadas a sus productos.
 
-## Atributos
+### hereda de
+
+`Usuario`
+
+### Atributos
 
 | Atributo       | Tipo   |Descripción                          |
 | -------------- | ------ | ------------------------------------------ |
 | estadoVendedor | String | El estado de su cuenta como vendedor.      |
 
-## Relaciones
+### Relaciones
 
-* Un vendedor publica cero o varios `Producto` (`publica`, 1 → 0..*).
-* Un vendedor administra cero o varias `Bodega` (`tiene`, 1 → 0..*).
+-   Publica cero o más `Producto`.
+-   Tiene cero o más `Bodega`.
 
----
+------------------------------------------------------------------------
 
-# Producto
+# Roles del sistema
 
+Los participantes de Ecommerce trabajan de acuerdo con un rol
+definido.
 
-Es cualquier artículo que un vendedor pone a la venta en la plataforma.
+  -----------------------------------------------------------------------
+  Rol                                 Responsabilidad principal
+  ----------------------------------- -----------------------------------
+  Comprador                           Adquiere productos publicados en la
+                                      plataforma.
 
-## Atributos
+  Vendedor                            Registra y administra sus
+                                      productos.
+
+  Administrador                       Administra vendedores y bodegas.
+
+  Operador Logístico                  Se encarga de la operación física
+                                      de bodegas y despachos.
+
+  Supervisor                          Realiza consultas y seguimiento
+                                      operativo.
+  -----------------------------------------------------------------------
+
+El rol se encuentra asociado al usuario mediante `rolUsuario`. Cada
+usuario tiene un único rol y solamente puede interactuar con la
+información relacionada con sus responsabilidades.
+
+------------------------------------------------------------------------
+
+## Producto
+
+### Descripción
+
+`Producto` representa los bienes físicos o digitales ofrecidos dentro de
+Ecommerce. Contiene la información necesaria para identificarlo,
+clasificarlo, establecer su precio y conocer su disponibilidad
+comercial.
+
+### Atributos
 
 | Atributo       | Tipo        |Descripción                             |
 | -------------- | ----------- | --------------------------------------------- |
@@ -170,39 +223,27 @@ Es cualquier artículo que un vendedor pone a la venta en la plataforma.
 | estado         | String      | Si está activo, agotado, descontinuado, etc.  |
 | precioActual   | double      | El precio al que se está vendiendo hoy.       |
 
-## Relaciones
 
-* Cada producto lo publica un solo `Vendedor` (`publica`, lado inverso).
-* Un producto puede tener varios registros de `Inventario` (`tiene`, 1 → 0..*).
-* Un producto puede aparecer en varios `ItemCarrito` y `LineaPedido` (`corresponde`).
+### Relaciones
 
----
+-   Es publicado por un `Vendedor`.
+-   Puede estar relacionado con uno o más registros de `Inventario`.
+-   Es referenciado por `ItemCarrito`.
+-   Es referenciado por `LineaPedido`.
 
-# Inventario
+------------------------------------------------------------------------
 
-Es el registro que controla cuánto stock hay disponible de un producto en una bodega específica.
+## Bodega
 
-## Atributos
+### Descripción
 
-| Atributo           | Tipo |Descripción                        |
-| ------------------ | ---- | ---------------------------------------- |
-| idInventario       | long | Identifica de forma única el registro.  |
-| cantidadDisponible | int  | Cuántas unidades hay disponibles.       |
+`Bodega` representa el lugar donde se administra y almacena físicamente
+el inventario de los productos.
 
-## Relaciones
+Ecommerce contempla bodegas del marketplace y bodegas asociadas a
+vendedores.
 
-* Cada registro de inventario pertenece a un solo `Producto` (`tiene`, lado inverso).
-* Cada registro de inventario está guardado en una sola `Bodega` (`almacenar`, lado inverso).
-
----
-
-# Bodega
-
-
-
-Es el lugar (físico o lógico) donde un vendedor almacena el inventario de sus productos.
-
-## Atributos
+### Atributos
 
 | Atributo        | Tipo   |Descripción                        |
 | --------------- | ------ | ---------------------------------------- |
@@ -210,21 +251,54 @@ Es el lugar (físico o lógico) donde un vendedor almacena el inventario de sus 
 | ubicacionBodega | String | Dónde está ubicada.                     |
 | tipoBodega      | String | Qué tipo de bodega es.                  |
 
-## Relaciones
+### Relaciones
 
-* Cada bodega pertenece a un solo `Vendedor` (`tiene`, lado inverso).
-* Una bodega guarda cero o varios registros de `Inventario` (`almacenar`).
-* Una bodega despacha cero o varios `Envio` (`despacha`, 1 → 0..*).
+-   Puede estar asociada a un `Vendedor`.
+-   Almacena cero o más `Inventario`.
+-   Puede despachar cero o más `Envio`.
 
----
+------------------------------------------------------------------------
 
-# Carrito
+## Inventario
 
+### Descripción
 
+`Inventario` representa las existencias disponibles de un producto en
+una bodega determinada.
 
-Es donde el comprador va acumulando los productos que quiere comprar, antes de confirmar el pedido.
+El inventario es distribuido, por lo que debe estar relacionado con un
+producto y con una bodega específica.
 
-## Atributos
+### Atributos
+
+| Atributo           | Tipo |Descripción                        |
+| ------------------ | ---- | ---------------------------------------- |
+| idInventario       | long | Identifica de forma única el registro.  |
+| cantidadDisponible | int  | Cuántas unidades hay disponibles.       |
+
+### Relaciones
+
+-   Corresponde a un `Producto`.
+-   Se almacena en una `Bodega`.
+
+### Regla de negocio
+
+No se permiten existencias negativas.
+
+------------------------------------------------------------------------
+
+## Carrito
+
+### Descripción
+
+`Carrito` representa el espacio donde el comprador reúne de manera
+provisional los productos que desea adquirir antes de confirmar el
+pedido.
+
+Un comprador puede contar con un carrito activo en un momento
+determinado.
+
+### Atributos
 
 | Atributo  | Tipo   |Descripción                       |
 | --------- | ------ | ----------------------------------------- |
@@ -233,21 +307,25 @@ Es donde el comprador va acumulando los productos que quiere comprar, antes de c
 | total     | double | El valor total acumulado hasta el momento. |
 | estado    | String | En qué estado está (activo, abandonado, etc). |
 
-## Relaciones
+### Relaciones
 
-* Cada carrito lo usa un solo `Comprador` (`utiliza`, lado inverso).
-* Un carrito contiene cero o varios `ItemCarrito` (`contiene`, 1 → 0..*).
-* Un carrito se puede confirmar en cero o un `Pedido` (`confirma`, 1 → 0..1).
+-   Es utilizado por un `Comprador`.
+-   Contiene cero o más `ItemCarrito`.
+-   Puede confirmarse para generar un `Pedido`.
 
----
+------------------------------------------------------------------------
 
-# ItemCarrito
+## ItemCarrito
 
+### Descripción
 
+`ItemCarrito` representa cada producto que el comprador agrega al
+carrito.
 
-Es cada producto individual que el comprador agregó al carrito, con su cantidad y precio.
+Permite almacenar la cantidad seleccionada y el precio unitario
+correspondiente al momento de la selección.
 
-## Atributos
+### Atributos
 
 | Atributo       | Tipo   |Descripción                             |
 | -------------- | ------ | ---------------------------------------------- |
@@ -255,20 +333,25 @@ Es cada producto individual que el comprador agregó al carrito, con su cantidad
 | cantidad       | int    | Cuántas unidades se agregaron.                |
 | precioUnitario | double | El precio del producto en el momento en que se agregó. |
 
-## Relaciones
+### Relaciones
 
-* Cada ítem pertenece a un solo `Carrito` (`contiene`, lado inverso).
-* Cada ítem corresponde a un solo `Producto` (`corresponde`, 0..* → 1).
+-   Pertenece a un `Carrito`.
+-   Corresponde a un `Producto`.
 
----
+------------------------------------------------------------------------
 
-# Pedido
+## Pedido
 
+### Descripción
 
+`Pedido` representa la compra que se genera cuando el comprador confirma
+los productos seleccionados.
 
-Es la compra ya confirmada, generada a partir de un carrito. A partir de aquí empieza el proceso de facturación, envío y, si aplica, devolución.
+Es uno de los elementos principales del proceso comercial, ya que
+conecta la compra con la facturación, el envío y los procesos de
+devolución.
 
-## Atributos
+### Atributos
 
 | Atributo      | Tipo   |Descripción                     |
 | ------------- | ------ | -------------------------------------- |
@@ -277,24 +360,42 @@ Es la compra ya confirmada, generada a partir de un carrito. A partir de aquí e
 | estado        | String | En qué estado está (pendiente, enviado, etc). |
 | total         | double | El valor total del pedido.            |
 
-## Relaciones
+### Relaciones
 
-* Un pedido se confirma a partir de cero o un `Carrito` (`confirma`, lado inverso).
-* Un pedido contiene una o varias `LineaPedido` (`Contiene`, 1 → 1..*).
-* Un pedido corresponde a un `Producto` (`corresponde`).
-* Un pedido genera una `Factura` (`genera`, 1 → 1).
-* Un pedido puede necesitar un `Envio` si aplica (`requiere si aplica`, 1 → 0..1).
-* Un pedido puede tener cero o varias `Devolucion` (`posible devolucion`, 1 → 0..*).
+-   Se genera a partir de la confirmación de un `Carrito`.
+-   Es realizado por un `Comprador`.
+-   Contiene una o más `LineaPedido`.
+-   Genera una `Factura`.
+-   Puede requerir cero o un `Envio`.
+-   Puede originar cero o más `Devolucion`.
 
----
+### Ciclo de estados
 
-# LineaPedido
+``` text
+Carrito
+   ↓
+Pendiente de Pago
+   ↓
+Pagado
+   ↓
+Despachado
+   ↓
+Entregado / Finalizado
+```
 
+------------------------------------------------------------------------
 
+## LineaPedido
 
-Es cada producto individual dentro de un pedido ya confirmado, con la cantidad y el precio acordado.
+### Descripción
 
-## Atributos
+`LineaPedido` representa cada producto incluido dentro de un pedido
+confirmado.
+
+Permite conservar la cantidad adquirida y el precio unitario aplicado a
+ese producto dentro del pedido.
+
+### Atributos
 
 | Atributo       | Tipo   |Descripción                          |
 | -------------- | ------ | ---------------------------------------- |
@@ -302,20 +403,21 @@ Es cada producto individual dentro de un pedido ya confirmado, con la cantidad y
 | cantidad       | int    | Cuántas unidades se pidieron.            |
 | precioUnitario | double | El precio del producto al momento del pedido. |
 
-## Relaciones
+### Relaciones
 
-* Cada línea pertenece a un solo `Pedido` (`Contiene`, lado inverso, 1..* → 1).
-* Cada línea corresponde a un `Producto` (`corresponde`).
+-   Pertenece a un `Pedido`.
+-   Corresponde a un `Producto`.
 
----
+------------------------------------------------------------------------
 
-# Factura
+## Factura
 
+### Descripción
 
+`Factura` representa la información comercial generada a partir de un
+pedido.
 
-Es el documento de cobro que se genera cuando se confirma un pedido.
-
-## Atributos
+### Atributos
 
 | Atributo  | Tipo   |Descripción                    |
 | --------- | ------ | ------------------------------------ |
@@ -325,19 +427,21 @@ Es el documento de cobro que se genera cuando se confirma un pedido.
 | subTotal  | double | El valor antes de ajustes.           |
 | total     | double | El valor final de la factura.        |
 
-## Relaciones
+### Relaciones
 
-* Cada factura se genera a partir de un solo `Pedido` (`genera`, lado inverso, 1 → 1).
+-   Un `Pedido` genera una `Factura`.
 
----
+------------------------------------------------------------------------
 
-# Envio
+## Envio
 
+### Descripción
 
+`Envio` representa el proceso mediante el cual los productos de un
+pedido son despachados desde una bodega hasta la dirección de entrega
+indicada.
 
-Es el envío asociado a un pedido, cuando ese pedido necesita entrega física.
-
-## Atributos
+### Atributos
 
 | Atributo           | Tipo   |Descripción                     |
 | ------------------- | ------ | ------------------------------------- |
@@ -345,19 +449,21 @@ Es el envío asociado a un pedido, cuando ese pedido necesita entrega física.
 | estado              | String | En qué estado está (en camino, entregado, etc). |
 | direccionDeEntrega  | String | A dónde se debe entregar.            |
 
-## Relaciones
+### Relaciones
 
-* Un envío es requerido por cero o un `Pedido` (`requiere si aplica`, lado inverso).
-* Un envío es despachado por una sola `Bodega` (`despacha`, lado inverso).
+-   Un `Pedido` puede requerir cero o un `Envio`.
+-   Una `Bodega` puede despachar cero o más `Envio`.
 
----
+------------------------------------------------------------------------
 
-# Devolucion
+## Devolucion
 
+### Descripción
 
-Es la solicitud que hace el comprador cuando quiere devolver algo de su pedido.
+`Devolucion` representa el proceso mediante el cual un pedido puede ser
+devuelto de acuerdo con las condiciones establecidas por el negocio.
 
-## Atributos
+### Atributos
 
 | Atributo     | Tipo   |Descripción                       |
 | ------------ | ------ | ----------------------------------------- |
@@ -366,19 +472,21 @@ Es la solicitud que hace el comprador cuando quiere devolver algo de su pedido.
 | fecha        | date   | Cuándo se solicitó.                      |
 | estado       | String | En qué estado está la devolución.        |
 
-## Relaciones
+### Relaciones
 
-* Una devolución está asociada a cero o varios `Pedido` (`posible devolucion`, lado inverso).
-* Una devolución puede generar cero o un `Reembolso` (`genera`, 1 → 0..1).
+-   Un `Pedido` puede originar cero o más `Devolucion`.
+-   Una `Devolucion` puede generar cero o un `Reembolso`.
 
----
+------------------------------------------------------------------------
 
-# Reembolso
+## Reembolso
 
+### Descripción
 
-Es el dinero que se le devuelve al comprador cuando su devolución fue aprobada.
+`Reembolso` representa la devolución del dinero asociada con una
+devolución aprobada o procesada.
 
-## Atributos
+### Atributos
 
 | Atributo    | Tipo   |Descripción                     |
 | ----------- | ------ | ------------------------------------- |
@@ -387,6 +495,147 @@ Es el dinero que se le devuelve al comprador cuando su devolución fue aprobada.
 | fecha       | date   | Cuándo se hizo el reembolso.          |
 | estado      | String | En qué estado está el reembolso.      |
 
-## Relaciones
+### Relaciones
 
-* Cada reembolso se genera a partir de una sola `Devolucion` (`genera`, lado inverso, 0..1 → 1).
+-   Una `Devolucion` puede generar cero o un `Reembolso`.
+
+------------------------------------------------------------------------
+
+# Reglas del dominio
+
+## Usuarios
+
+-   Cada usuario debe tener un identificador único.
+-   El correo electrónico debe ser único.
+-   El documento de identidad debe ser único.
+-   Cada usuario tiene un único rol.
+-   El usuario solamente puede interactuar con información relacionada
+    con las funciones de su rol.
+
+## Compradores
+
+-   El comprador puede registrar una dirección principal.
+-   Puede registrar direcciones adicionales.
+-   El comprador puede utilizar un carrito para seleccionar productos.
+-   El comprador puede realizar pedidos.
+
+## Vendedores
+
+-   Los vendedores son incorporados por el Administrador.
+-   El vendedor registra y administra sus productos.
+-   El vendedor puede trabajar con las bodegas asociadas.
+
+## Productos
+
+-   Los productos pueden ser físicos o digitales.
+-   Los productos pueden tener variantes como color, talla o modelo.
+-   Los productos tienen un estado dentro del catálogo.
+-   Los productos físicos requieren inventario y despacho.
+-   Los productos digitales tienen entrega inmediata después del pago.
+
+## Inventario
+
+-   El inventario está asociado a un producto y a una bodega.
+-   No se permiten existencias negativas.
+-   El inventario puede participar en movimientos de ingreso, reserva,
+    salida por venta, ajuste y devolución.
+
+## Carrito y pedido
+
+-   Un comprador puede tener cero o un carrito activo.
+-   Un carrito puede contener varios `ItemCarrito`.
+-   Cada `ItemCarrito` corresponde a un producto.
+-   Un carrito puede confirmarse para generar un pedido.
+-   Un pedido contiene una o más líneas de pedido.
+-   Un pedido finalizado no puede modificarse.
+
+## Logística
+
+-   Un pedido puede requerir un envío cuando corresponde.
+-   La bodega realiza el despacho del pedido.
+-   El envío contiene la dirección de entrega.
+-   El estado del envío permite hacer seguimiento al proceso logístico.
+
+## Devoluciones y reembolsos
+
+-   Un pedido puede originar una o varias devoluciones.
+-   Una devolución puede generar como máximo un reembolso.
+-   El reembolso registra el monto, la fecha y el estado
+    correspondiente.
+
+------------------------------------------------------------------------
+
+# Ciclo de vida del dominio
+
+El proceso general de Ecommerce puede representarse de la siguiente
+manera:
+
+``` text
+Vendedor
+   │
+   └── publica
+          ↓
+       Producto
+          │
+          └── disponible en
+                 ↓
+              Inventario
+                 │
+                 └── almacenado en
+                        ↓
+                      Bodega
+
+Comprador
+   │
+   └── selecciona
+          ↓
+       Carrito
+          │
+          └── contiene
+                 ↓
+             ItemCarrito
+                 │
+                 └── corresponde
+                        ↓
+                     Producto
+                        │
+                        └── confirmación
+                               ↓
+                             Pedido
+                               │
+              ┌────────────────┼────────────────┐
+              ↓                ↓                ↓
+           Factura           Envio          Devolucion
+                                                  │
+                                                  ↓
+                                             Reembolso
+```
+
+------------------------------------------------------------------------
+
+# Resumen
+
+Las principales clases del dominio de Ecommerce son:
+
+``` text
+Usuario (Abstracto)
+Comprador
+Vendedor
+Producto
+Bodega
+Inventario
+Carrito
+ItemCarrito
+Pedido
+LineaPedido
+Factura
+Envio
+Devolucion
+Reembolso
+```
+
+El modelo representa el flujo principal del marketplace: los vendedores
+publican productos, estos se relacionan con el inventario disponible en
+las bodegas, los compradores seleccionan productos mediante el carrito,
+confirman sus pedidos y posteriormente se gestionan la facturación, el
+envío y los procesos de devolución y reembolso cuando corresponda.
