@@ -1,4 +1,4 @@
-# Domain Model -- Ecommerce
+# Domain Model 
 
 ## Introducción
 
