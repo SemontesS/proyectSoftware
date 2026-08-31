@@ -80,6 +80,21 @@ Bodega
 
 ---
 
+# Usuario(Abstracta)
+
+Esta clase abstracta identifica la información principal y contacto que comparten los usuarios del sistema.
+
+El rol asignado a un participante tiene varias funciones y restricciones con el fin de asignar responsabilidades a cada uno
+
+Esta clase no se puede instanciar directamente.
+
+## Atributos
+
+|Atributo |tipo |Descrispcion                                                                                                                                     |
+|---------|-----|-------------------------------------------------------------------------------------------------------------------------------------------|
+
+
+
 
 
 
