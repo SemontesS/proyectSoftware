@@ -121,6 +121,9 @@ Administrar la información específica para la participación en procesos comer
 |Estado comercial|String|Condición del comprador para realizar compras.|
 
 ## Relaciones
+La relacion que tiene Comprador es que hereda atributos de las clase usuario.
+
+
 
 
 
