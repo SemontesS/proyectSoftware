@@ -92,6 +92,37 @@ Esta clase no se puede instanciar directamente.
 
 |Atributo |tipo |Descrispcion                                                                                                                                     |
 |---------|-----|-------------------------------------------------------------------------------------------------------------------------------------------|
+|identificar|long|Identifica de forma única al usuario|
+|Nombre completo|String|Nombre oficial del usuario.|
+|Correo electrónico|String|Medio principal de acceso y comunicación.|
+|Rol|String|Define las responsabilidades y permisos.|
+|estado|String|Condición operativa (Activo, Bloqueado, etc.).|
+
+## Relaciones
+
+* Un usuario tiene diferentes roles
+* las clases Vendedor y Comprador heredan atributos de la clase Usuario
+* el Rol identifica los participantes del sistema como lo son (Comprador, Vendedor, Operador, Administrador, Supervisor).
+
+---
+
+# Comprador
+
+Administrar la información específica para la participación en procesos comerciales.
+
+## Hereda de 
+`Customer` 
+## Atributos
+
+|Atributo |tipo |Descrispcion                                                                                                                                     |
+|---------|-----|-------------------------------------------------------------------------------------------------------------------------------------------|
+|Dirección principal|String|Ubicación habitual para entregas.|
+|Direcciones adicionales|String|Ubicaciones secundarias de entrega.|
+|Estado comercial|String|Condición del comprador para realizar compras.|
+
+## Relaciones
+
+
 
 
 
