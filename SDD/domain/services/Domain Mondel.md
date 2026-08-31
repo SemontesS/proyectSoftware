@@ -19,7 +19,7 @@ el proceso comercial y logístico.
 
 ------------------------------------------------------------------------
 
-# Domain Class Hierarchy
+# Jerarquía de clases de dominio
 
 ``` text
 Usuario (Abstracto)
@@ -45,7 +45,7 @@ el atributo `rolUsuario`.
 
 ------------------------------------------------------------------------
 
-# Domain Relationships
+# Relaciones de dominio
 
 ``` text
 Usuario
@@ -84,7 +84,7 @@ Usuario
 
 ------------------------------------------------------------------------
 
-# Entities
+# Entidades
 
 ## Usuario (Abstracto)
 
@@ -182,18 +182,18 @@ definido.
   -----------------------------------------------------------------------
   Rol                                 Responsabilidad principal
   ----------------------------------- -----------------------------------
-  Comprador                           Adquiere productos publicados en la
+  * **Comprador**                           Adquiere productos publicados en la
                                       plataforma.
 
-  Vendedor                            Registra y administra sus
+  * **Vendedor**                            Registra y administra sus
                                       productos.
 
-  Administrador                       Administra vendedores y bodegas.
+  * **Administrador**                       Administra vendedores y bodegas.
 
-  Operador Logístico                  Se encarga de la operación física
+  * **Operador Logístico**                  Se encarga de la operación física
                                       de bodegas y despachos.
 
-  Supervisor                          Realiza consultas y seguimiento
+  * **Supervisor**                          Realiza consultas y seguimiento
                                       operativo.
   -----------------------------------------------------------------------
 
