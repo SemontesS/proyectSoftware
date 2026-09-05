@@ -6,9 +6,6 @@ package com.ecommerce.domain.valueobjects;
  * Representa la situación del carrito durante el proceso de compra.
  * (Carrito.estado)
  *
- * NOTA: el documento no define un catálogo cerrado, pero sí distingue
- * un carrito disponible para seguir agregando productos de uno ya
- * utilizado para confirmar un pedido; esa distinción se refleja abajo.
  */
 public enum EstadoCarrito implements DomainCatalog {
 

@@ -6,10 +6,7 @@ package com.ecommerce.domain.valueobjects;
  * Representa la condición comercial del comprador frente a las
  * operaciones que puede realizar en la plataforma. (Comprador.estadoComprador)
  *
- * NOTA: el documento fuente indica que este atributo es obligatorio,
- * pero no define un catálogo detallado de valores. Los valores abajo
- * son una propuesta razonable y pueden ajustarse a la especificación
- * funcional real.
+ 
  */
 public enum EstadoComprador implements DomainCatalog {
 

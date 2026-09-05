@@ -6,9 +6,6 @@ package com.ecommerce.domain.valueobjects;
  * Estructura general para los Value Objects que manejan valores
  * controlados dentro del dominio (roles, estados, tipos).
  *
- * Todo enum que represente un catálogo del dominio (RolUsuario,
- * EstadoProducto, TipoProducto, etc.) implementa esta interfaz para
- * garantizar que siempre exponga code, name y description.
  */
 public interface DomainCatalog {
 

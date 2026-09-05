@@ -9,6 +9,7 @@ package com.ecommerce.domain.valueobjects;
 public enum MovimientoInventario implements DomainCatalog {
 
     INGRESO("INGRESO", "Ingreso",
+
             "Entrada de existencias al inventario."),
     RESERVA("RESERVA", "Reserva",
             "Separación de existencias para una operación."),

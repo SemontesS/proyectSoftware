@@ -6,10 +6,7 @@ package com.ecommerce.domain.valueobjects;
  * Representa la situación de una devolución asociada a un pedido, desde
  * que se solicita hasta que finaliza. (Devolucion.estado)
  *
- * NOTA: la especificación funcional consultada no define un catálogo
- * detallado de valores para este estado. Los valores abajo son una
- * propuesta razonable y deben ajustarse a la especificación funcional
- * real cuando esté disponible.
+ 
  */
 public enum EstadoDevolucion implements DomainCatalog {
 

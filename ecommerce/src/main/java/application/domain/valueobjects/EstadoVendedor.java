@@ -6,9 +6,6 @@ package com.ecommerce.domain.valueobjects;
  * Representa la situación actual del vendedor dentro de Ecommerce,
  * controlando si se encuentra habilitado para operar. (Vendedor.estadoVendedor)
  *
- * NOTA: el documento fuente no define un catálogo detallado de valores.
- * Los valores abajo son una propuesta razonable y pueden ajustarse a la
- * especificación funcional real.
  */
 public enum EstadoVendedor implements DomainCatalog {
 
