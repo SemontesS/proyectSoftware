@@ -1,34 +1,22 @@
-package com.ecommerce.domain.valueobjects;
-
-import java.util.Objects;
+package application.domain.valueobjects;
 
 /**
- * VarianteProducto
- * ----------------
- * Representa una característica que permite diferenciar una
- * presentación de un producto (por ejemplo: color, talla o modelo).
+ * VarianteProducto representa una característica que diferencia una
+ * presentación de un producto (por ejemplo Color = Negro, Talla = M).
  *
- * A diferencia de RolUsuario, TipoProducto, etc., no es un catálogo de
- * valores fijos, sino un Value Object simple de tipo/valor. Producto
- * mantiene una lista de variantes (Producto.variantes -> List<VarianteProducto>).
+ * La estructura definitiva podrá ajustarse si los requisitos detallan cómo
+ * las variantes afectan el inventario.
  *
- * Ejemplos:
- *   new VarianteProducto("Color", "Negro")
- *   new VarianteProducto("Talla", "M")
- *   new VarianteProducto("Modelo", "2026")
+ * Fuente: Domain Value Objects — NexusMarket, sección 9.
  */
-public record VarianteProducto(String tipo, String valor) {
+public record VarianteProducto(String atributo, String valor) {
 
     public VarianteProducto {
-        Objects.requireNonNull(tipo, "El tipo de variante no puede ser nulo.");
-        Objects.requireNonNull(valor, "El valor de la variante no puede ser nulo.");
-        if (tipo.isBlank() || valor.isBlank()) {
-            throw new IllegalArgumentException("El tipo y el valor de la variante no pueden estar vacíos.");
+        if (atributo == null || atributo.isBlank()) {
+            throw new IllegalArgumentException("El atributo de la variante no puede ser vacío.");
         }
-    }
-
-    @Override
-    public String toString() {
-        return tipo + ": " + valor;
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException("El valor de la variante no puede ser vacío.");
+        }
     }
 }

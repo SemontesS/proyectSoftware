@@ -1,46 +1,31 @@
-package com.ecommerce.domain.valueobjects;
+package application.domain.valueobjects;
 
 /**
- * RolUsuario
- * ----------
- * Representa el papel que cumple una persona dentro de Ecommerce.
- * Cada usuario tiene un único rol dentro del sistema (Usuario.rolUsuario).
+ * RolUsuario representa la responsabilidad que tiene un usuario dentro de
+ * NexusMarket. Cada usuario posee un único rol.
+ *
+ * Fuente: Domain Value Objects — NexusMarket, sección 3.
  */
-public enum RolUsuario implements DomainCatalog {
+public enum RolUsuario {
+    COMPRADOR("Comprador", "Adquiere productos publicados."),
+    VENDEDOR("Vendedor", "Registra y administra productos."),
+    ADMINISTRADOR("Administrador", "Administra vendedores y bodegas."),
+    OPERADOR_LOGISTICO("Operador Logístico", "Gestiona la operación física y los despachos."),
+    SUPERVISOR("Supervisor", "Realiza consultas y seguimiento operativo.");
 
-    COMPRADOR("COMPRADOR", "Comprador",
-            "Usuario que adquiere productos publicados."),
-    VENDEDOR("VENDEDOR", "Vendedor",
-            "Responsable de registrar y administrar productos."),
-    OPERADOR_LOGISTICO("OPERADOR_LOGISTICO", "Operador Logístico",
-            "Responsable de la operación física de bodegas y despachos."),
-    ADMINISTRADOR("ADMINISTRADOR", "Administrador",
-            "Responsable de administrar vendedores y bodegas."),
-    SUPERVISOR("SUPERVISOR", "Supervisor",
-            "Perfil encargado de consulta y seguimiento operativo.");
+    private final String nombre;
+    private final String responsabilidad;
 
-    private final String code;
-    private final String name;
-    private final String description;
-
-    RolUsuario(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
+    RolUsuario(String nombre, String responsabilidad) {
+        this.nombre = nombre;
+        this.responsabilidad = responsabilidad;
     }
 
-    @Override
-    public String getCode() {
-        return code;
+    public String getNombre() {
+        return nombre;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public String getResponsabilidad() {
+        return responsabilidad;
     }
 }

@@ -1,43 +1,21 @@
-package com.ecommerce.domain.valueobjects;
+package application.domain.valueobjects;
 
 /**
- * EstadoReembolso
- * ---------------
- * Representa la situación en la que se encuentra un reembolso asociado
- * a una devolución. (Reembolso.estado)
+ * EstadoReembolso representa la situación de un reembolso asociado a una
+ * devolución procesada.
  *
+ * La especificación incluye reembolsos, pero no define un catálogo
+ * detallado de estados; los valores concretos quedan pendientes de
+ * definición funcional.
+ *
+ * Fuente: Domain Value Objects — NexusMarket, sección 16.
  */
-public enum EstadoReembolso implements DomainCatalog {
+public record EstadoReembolso(String codigo) {
 
-    PENDIENTE("PENDIENTE", "Pendiente",
-            "El reembolso todavía no ha sido procesado."),
-    PROCESADO("PROCESADO", "Procesado",
-            "El reembolso fue realizado al comprador."),
-    RECHAZADO("RECHAZADO", "Rechazado",
-            "El reembolso no procede.");
-
-    private final String code;
-    private final String name;
-    private final String description;
-
-    EstadoReembolso(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public EstadoReembolso {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El estado del reembolso no puede ser vacío.");
+        }
+        codigo = codigo.trim().toUpperCase();
     }
 }

@@ -1,44 +1,20 @@
-package com.ecommerce.domain.valueobjects;
+package application.domain.valueobjects;
 
 /**
- * EstadoComprador
- * ---------------
- * Representa la condición comercial del comprador frente a las
- * operaciones que puede realizar en la plataforma. (Comprador.estadoComprador)
+ * EstadoComprador representa la situación comercial del comprador.
  *
- 
+ * La especificación funcional establece que este atributo es obligatorio,
+ * pero no entrega un catálogo detallado de valores permitidos. Por ello no
+ * se inventan valores adicionales; se modela como un código controlado.
+ *
+ * Fuente: Domain Value Objects — NexusMarket, sección 5.
  */
-public enum EstadoComprador implements DomainCatalog {
+public record EstadoComprador(String codigo) {
 
-    ACTIVO("ACTIVO", "Activo",
-            "El comprador puede realizar compras con normalidad."),
-    SUSPENDIDO("SUSPENDIDO", "Suspendido",
-            "El comprador tiene restringida temporalmente la posibilidad de comprar."),
-    INACTIVO("INACTIVO", "Inactivo",
-            "El comprador no se encuentra habilitado dentro de la plataforma.");
-
-    private final String code;
-    private final String name;
-    private final String description;
-
-    EstadoComprador(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public EstadoComprador {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El estado del comprador no puede ser vacío.");
+        }
+        codigo = codigo.trim().toUpperCase();
     }
 }

@@ -1,513 +1,585 @@
-# Domain Value Objects
+# Domain Value Objects --- NexusMarket
 
-## Introducción
+## 1. Introducción
 
-Los Value Objects son elementos que nos ayudan a organizar y representar algunos valores importantes dentro de Ecommerce. Estos se pueden utilizar para manejar información como los roles de los usuarios, los diferentes estados de los procesos y los tipos de productos que se encuentran dentro de la plataforma.
+Los **Value Objects** representan conceptos del dominio cuyo significado
+depende del valor que contienen y no de una identidad propia.
 
-A diferencia de una entidad, un Value Object no necesita tener un identificador propio, ya que lo más importante es el valor que representa y la información que contiene. En este caso, los Value Objects permiten que los datos utilizados en el sistema tengan un significado más claro y se manejen de una manera organizada.
+En NexusMarket permiten representar de manera clara conceptos como
+roles, estados, tipos de producto, direcciones, dinero y tipos de
+movimientos de inventario.
 
-Dentro de Ecommerce, estos valores hacen parte de diferentes procesos del marketplace y ayudan a representar de forma sencilla la información relacionada con los usuarios, productos, pedidos, inventario y demás elementos que hacen parte del funcionamiento de la plataforma.
-------------------------------------------------------------------------
-
-# Value Object Structure
+## 2. Value Objects identificados
 
 ``` text
-DomainCatalog
+Domain Value Objects
+│
 ├── RolUsuario
 ├── EstadoUsuario
 ├── EstadoComprador
 ├── EstadoVendedor
 ├── TipoProducto
 ├── EstadoProducto
+├── VarianteProducto
 ├── TipoBodega
-├── EstadoInventario
+├── TipoMovimientoInventario
 ├── EstadoCarrito
 ├── EstadoPedido
 ├── EstadoEnvio
 ├── EstadoDevolucion
-└── EstadoReembolso
+├── EstadoReembolso
+├── Direccion
+└── Dinero
 ```
 
-Estos conceptos permiten mantener valores definidos para los diferentes
-elementos del sistema y facilitan la interpretación de la información
-del negocio.
+## 3. RolUsuario
 
-------------------------------------------------------------------------
+### Descripción
 
-# DomainCatalog
+`RolUsuario` representa la responsabilidad que tiene un usuario dentro
+de NexusMarket.
 
-## Descripción
-
-`DomainCatalog` representa una estructura general para los valores que
-se manejan de forma controlada dentro del dominio.
-
-Su propósito es agrupar conceptos que tienen valores previamente
-definidos, como los roles, estados y tipos.
-
-### Atributos
-
-  | Atributo      | Tipo     | Descripción |
-  |------------- | -------- | ---------------------------------------------
-  | code          | String   | Código utilizado para identificar el valor.|
-  | name          | String   | Nombre del valor.|
-  | description   | String   | del significado del valor.|
-
-------------------------------------------------------------------------
-
-# RolUsuario
-
-## Descripción
-
-`RolUsuario` representa el papel que cumple una persona dentro de
-Ecommerce.
-
-El rol permite establecer las responsabilidades que puede desarrollar
-cada usuario dentro de la plataforma.
+Cada usuario posee un único rol.
 
 ### Valores definidos
 
-  | Código                  | Rol                     | Descripción |
-  |----------------------- | ----------------------- | ---------------------|
-  | COMPRADOR               | Comprador               | Usuario que adquiere productos publicados.| 
-  | VENDEDOR               | Vendedor               | Responsable de registrar y administrar productos.|
-  | OPERADOR_LOGISTICO      | Operador Logístico      | Responsable de la operación física de bodegas y despachos.| 
-  | ADMINISTRADOR           | Administrador           | Responsable de administrar vendedores y bodegas.| 
-  | SUPERVISOR              | Supervisor              | Perfil encargado de consulta y seguimiento operativo.| 
   -----------------------------------------------------------------------
+  Código                  Nombre                  Responsabilidad
+  ----------------------- ----------------------- -----------------------
+  COMPRADOR               Comprador               Adquiere productos
+                                                  publicados.
 
-### Relación con Usuario
+  VENDEDOR                Vendedor                Registra y administra
+                                                  productos.
 
-``` text
-Usuario
-   │
-   └── rolUsuario
-```
+  ADMINISTRADOR           Administrador           Administra vendedores y
+                                                  bodegas.
 
-Cada usuario tiene un único rol dentro del sistema.
+  OPERADOR_LOGISTICO      Operador Logístico      Gestiona la operación
+                                                  física y los despachos.
 
-------------------------------------------------------------------------
-
-# EstadoUsuario
-
-## Descripción
-
-`EstadoUsuario` representa la condición operativa en la que se encuentra
-un usuario.
-
-Permite identificar si el usuario se encuentra habilitado o presenta
-alguna restricción para operar dentro del sistema.
-
-La especificación funcional contempla estados como **Activo** y
-**Bloqueado**
+  SUPERVISOR              Supervisor              Realiza consultas y
+                                                  seguimiento operativo.
+  -----------------------------------------------------------------------
 
 ### Uso
 
 ``` text
 Usuario
-   └── estado
+   │
+   └── rol : RolUsuario
 ```
 
-------------------------------------------------------------------------
+## 4. EstadoUsuario
 
-# EstadoComprador
+### Descripción
 
-## Descripción
+`EstadoUsuario` representa la condición operativa del usuario.
 
-`EstadoComprador` representa la condición comercial del comprador.
+La especificación contempla estados como:
 
-Este valor permite identificar la situación del comprador frente a las
-operaciones comerciales que puede realizar en la plataforma.
+``` text
+ACTIVO
+BLOQUEADO
+```
+
+### Uso
+
+``` text
+Usuario
+   │
+   └── estado : EstadoUsuario
+```
+
+## 5. EstadoComprador
+
+### Descripción
+
+`EstadoComprador` representa la situación comercial del comprador.
 
 ### Uso
 
 ``` text
 Comprador
-   └── estadoComprador
+   │
+   └── estadoComercial : EstadoComprador
 ```
 
-La especificación funcional establece que este atributo es obligatorio.
+La especificación establece que este estado es obligatorio, pero no
+proporciona un catálogo detallado de valores. Por ello no se inventan
+valores adicionales.
 
-------------------------------------------------------------------------
+## 6. EstadoVendedor
 
-# EstadoVendedor
-
-## Descripción
+### Descripción
 
 `EstadoVendedor` representa la situación actual del vendedor dentro de
-Ecommerce.
-
-Permite controlar si el vendedor se encuentra habilitado para
-desarrollar sus actividades dentro de la plataforma.
+NexusMarket.
 
 ### Uso
 
 ``` text
 Vendedor
-   └── estadoVendedor
+   │
+   └── estado : EstadoVendedor
 ```
 
-------------------------------------------------------------------------
+La especificación contempla el estado del vendedor, pero no define un
+catálogo completo de valores.
 
-# TipoProducto
+## 7. TipoProducto
 
-## Descripción
+### Descripción
 
-`TipoProducto` permite diferenciar los productos ofrecidos en
-Ecommerce según la forma en que son entregados.
+`TipoProducto` diferencia los productos según la forma en que se
+entregan.
 
-### Valores definidos
+### Valores
 
- 
-| Código                 | Tipo                   | Descripción |
-| ----------------------- | ---------------------- |-------------------- |
-| FISICO                 | Físico                 | Producto que requiere inventario y despacho.|
-| DIGITAL                | Digital                | Producto cuya entrega se realiza de forma  inmediata después del pago.|
-
+  Código    Nombre    Descripción
+  --------- --------- -------------------------------------------
+  FISICO    Físico    Requiere inventario y despacho.
+  DIGITAL   Digital   Tiene entrega inmediata después del pago.
 
 ### Uso
 
 ``` text
 Producto
-   └── tipoProducto
+   │
+   └── tipoProducto : TipoProducto
 ```
 
-------------------------------------------------------------------------
+## 8. EstadoProducto
 
-# EstadoProducto
-
-## Descripción
+### Descripción
 
 `EstadoProducto` representa la situación del producto dentro del
 catálogo.
 
-### Valores definidos
+### Valores
 
   -----------------------------------------------------------------------
+  Código                  Nombre                  Descripción
+  ----------------------- ----------------------- -----------------------
+  PUBLICADO               Publicado               Producto disponible en
+                                                  el catálogo.
 
- | Código                  | Estado                |  Descripción |
- | ----------------------- | ----------------------- | --------------------|
- | PUBLICADO               | Publicado               | Producto disponible dentro del catálogo.|
- |SUSPENDIDO              | Suspendido               | Producto temporalmente suspendido. |
- | DESCONTINUADO          | Descontinuado          | Producto que dejó de estar disponible dentro  del catálogo. |
+  SUSPENDIDO              Suspendido              Producto temporalmente
+                                                  suspendido.
 
-
-### Uso
-
-``` text
-Producto
-   └── estado
-```
-
-------------------------------------------------------------------------
-
-# VariantesProducto
-
-## Descripción
-
-Las variantes representan las características que permiten diferenciar
-una presentación de un producto, por ejemplo, color, talla o modelo.
-
-En Ecommerce se manejan como un valor asociado al producto y se
-almacenan como una lista.
-
-### Ejemplos
-
-``` text
-Color: Negro
-Talla: M
-Modelo: 2026
-```
+  DESCONTINUADO           Descontinuado           Producto que dejó de
+                                                  estar disponible.
+  -----------------------------------------------------------------------
 
 ### Uso
 
 ``` text
 Producto
-   └── variantes
+   │
+   └── estado : EstadoProducto
 ```
 
-La especificación funcional establece que las variantes corresponden a
-diferencias como color, talla y modelo.
+## 9. VarianteProducto
 
-------------------------------------------------------------------------
+### Descripción
 
-# TipoBodega
+`VarianteProducto` representa una característica que diferencia una
+presentación de un producto.
 
-## Descripción
+Puede representar:
 
-`TipoBodega` permite clasificar las bodegas utilizadas para el
-almacenamiento de los productos.
+``` text
+Color
+Talla
+Modelo
+```
 
-### Clasificación definida
+### Ejemplo
 
--   Bodega del Marketplace.
--   Bodega de Vendedor.
+``` text
+VarianteProducto
+├── atributo = "Color"
+└── valor = "Negro"
+```
+
+Otro ejemplo:
+
+``` text
+VarianteProducto
+├── atributo = "Talla"
+└── valor = "M"
+```
+
+### Uso
+
+``` text
+Producto
+   │
+   └── variantes : List<VarianteProducto>
+```
+
+La estructura definitiva podrá ajustarse si los requisitos detallan cómo
+las variantes afectan el inventario.
+
+## 10. TipoBodega
+
+### Descripción
+
+`TipoBodega` identifica el tipo de bodega utilizada.
+
+### Valores
+
+``` text
+MARKETPLACE
+VENDEDOR
+```
 
 ### Uso
 
 ``` text
 Bodega
-   └── tipoBodega
+   │
+   └── tipo : TipoBodega
 ```
 
-------------------------------------------------------------------------
+## 11. TipoMovimientoInventario
 
-# EstadoInventario
+### Descripción
 
-## Descripción
+Representa el tipo de operación realizada sobre las existencias.
 
-`EstadoInventario` representa la condición de las existencias asociadas
-a un producto y una bodega.
+Es diferente de un estado porque representa una operación o movimiento.
 
-La gestión del inventario contempla el control de las existencias y
-evita que se registren cantidades negativas.
+### Valores
 
-### Movimientos relacionados
+  Código         Nombre             Descripción
+  -------------- ------------------ ----------------------------
+  INGRESO        Ingreso            Entrada de existencias.
+  RESERVA        Reserva            Separación de existencias.
+  SALIDA_VENTA   Salida por venta   Disminución por una venta.
+  AJUSTE         Ajuste             Corrección de existencias.
+  DEVOLUCION     Devolución         Reingreso de existencias.
 
-La especificación funcional contempla los siguientes movimientos:
+### Uso
 
-  |Movimiento        | Descripción |
-| ------------------- | ---------------------------------------|
-|  Ingreso           | Entrada de existencias al inventario. |
-|  Reserva           | Separación de existencias para una operación. |
-|  Salida por venta |   Descuento de existencias debido a una venta. |
-|  Ajuste            | Modificación de la cantidad registrada por una corrección. |
-|  Devolución |        Reingreso relacionado con una devolución.|
+``` text
+MovimientoInventario
+   │
+   └── tipo : TipoMovimientoInventario
+```
 
-------------------------------------------------------------------------
+## 12. EstadoCarrito
 
-# EstadoCarrito
+### Descripción
 
-## Descripción
+`EstadoCarrito` representa la situación actual del carrito.
 
-`EstadoCarrito` representa la situación del carrito durante el proceso
-de compra.
+### Valores conceptuales
 
-Permite diferenciar un carrito que se encuentra disponible para seguir
-agregando productos de uno que ya fue utilizado para confirmar un
-pedido.
+``` text
+ACTIVO
+CONFIRMADO
+ABANDONADO
+```
+
+El catálogo definitivo debe mantenerse alineado con las reglas
+funcionales que se establezcan para el carrito.
 
 ### Uso
 
 ``` text
 Carrito
-   └── estado
+   │
+   └── estado : EstadoCarrito
 ```
 
-------------------------------------------------------------------------
+## 13. EstadoPedido
 
-# EstadoPedido
+### Descripción
 
-## Descripción
+`EstadoPedido` representa la etapa del pedido dentro de su ciclo
+comercial.
 
-`EstadoPedido` representa la etapa en la que se encuentra una compra
-dentro de Ecommerce.
-
-### Ciclo definido
+### Valores
 
 ``` text
-Carrito
-   ↓
-Pendiente de Pago
-   ↓
-Pagado
-   ↓
-Despachado
-   ↓
-Entregado / Finalizado
+PENDIENTE_PAGO
+PAGADO
+DESPACHADO
+ENTREGADO
+FINALIZADO
 ```
 
-### Descripción de los estados
-
-  -----------------------------------------------------------------------
- |Estado                              | Descripción
-  | ----------------------------------- | -----------------------------------
-  | Carrito                             | Los productos todavía se encuentran   en selección provisional. |
-|Pendiente de Pago                   | El pedido espera la confirmación  financiera. |
-|Pagado                              |El pago fue confirmado y comienza el alistamiento. |
-|Despachado                          El pedido salió físicamente de la bodega.|
-|Entregado / Finalizado             | La entrega fue completadasatisfactoriamente. |
-  
-
-### Uso
+### Ciclo
 
 ``` text
-Pedido
-   └── estado
+PENDIENTE_PAGO
+      ↓
+   PAGADO
+      ↓
+ DESPACHADO
+      ↓
+  ENTREGADO
+      ↓
+  FINALIZADO
 ```
 
-Un pedido que ya se encuentra finalizado no puede ser modificado.
+`CARRITO` no pertenece a `EstadoPedido`, porque el carrito es un
+concepto independiente que precede a la creación del pedido.
 
-------------------------------------------------------------------------
+### Regla
 
-# EstadoEnvio
+``` text
+FINALIZADO → no puede modificarse
+```
 
-## Descripción
+## 14. EstadoEnvio
 
-`EstadoEnvio` representa la situación del proceso logístico asociado con
-un pedido.
+### Descripción
 
-Permite realizar el seguimiento del envío desde su preparación y
-despacho hasta la entrega.
+`EstadoEnvio` representa la situación del proceso logístico.
+
+El proceso contempla preparación, despacho, transporte y confirmación de
+entrega.
 
 ### Uso
 
 ``` text
 Envio
-   └── estado
+   │
+   └── estado : EstadoEnvio
 ```
 
-La especificación funcional establece que la gestión logística incluye
-el empaque, despacho, transporte y confirmación de la entrega.
+El catálogo exacto de estados debe mantenerse alineado con las reglas
+funcionales de logística.
 
-------------------------------------------------------------------------
+## 15. EstadoDevolucion
 
-# EstadoDevolucion
+### Descripción
 
-## Descripción
-
-`EstadoDevolucion` representa la situación de una devolución asociada a
-un pedido.
-
-Permite realizar seguimiento al proceso desde que se solicita hasta que
-finaliza.
+`EstadoDevolucion` representa la situación de una devolución y permite
+realizar seguimiento desde la solicitud hasta su finalización.
 
 ### Uso
 
 ``` text
 Devolucion
-   └── estado
+   │
+   └── estado : EstadoDevolucion
 ```
 
-La especificación funcional contempla la gestión de devoluciones, aunque
-no establece en el documento consultado un catálogo detallado de valores
-para este estado.
+La especificación contempla devoluciones, pero no proporciona un
+catálogo detallado de estados. Por esta razón no se inventan valores.
 
-------------------------------------------------------------------------
+## 16. EstadoReembolso
 
-# EstadoReembolso
+### Descripción
 
-## Descripción
-
-`EstadoReembolso` representa la situación en la que se encuentra un
-reembolso asociado a una devolución.
+`EstadoReembolso` representa la situación de un reembolso asociado a una
+devolución.
 
 ### Uso
 
 ``` text
 Reembolso
-   └── estado
+   │
+   └── estado : EstadoReembolso
 ```
 
-El proceso de reembolso forma parte de los procesos incluidos dentro del
-alcance de Ecommerce.
+La especificación incluye reembolsos, pero no define un catálogo
+detallado de estados. Los valores concretos quedan pendientes de
+definición funcional.
 
-La especificación funcional consultada no define un catálogo detallado
-de valores para este estado.
+## 17. Direccion
 
-------------------------------------------------------------------------
+### Descripción
 
-# Relación de los Value Objects con las entidades
+`Direccion` representa la información necesaria para identificar un
+lugar de entrega.
 
-Los valores se utilizan directamente dentro de las entidades
-correspondientes:
+### Estructura conceptual
+
+  Atributo   Tipo     Descripción
+  ---------- -------- ------------------------------
+  tipo       String   Tipo de dirección.
+  detalle    String   Información de la dirección.
+  ciudad     String   Ciudad de la dirección.
+
+### Uso
+
+``` text
+Comprador
+├── direccionPrincipal : Direccion
+└── direccionesAdicionales : List<Direccion>
+
+Envio
+└── direccionEntrega : Direccion
+```
+
+## 18. Dinero
+
+### Descripción
+
+`Dinero` representa un valor monetario dentro del dominio.
+
+Permite evitar que conceptos monetarios importantes sean manejados
+únicamente como números sin significado de negocio.
+
+### Estructura conceptual
+
+  Atributo   Tipo      Descripción
+  ---------- --------- -------------------
+  monto      Decimal   Valor monetario.
+  moneda     String    Moneda utilizada.
+
+### Uso
+
+``` text
+Producto
+└── precioActual : Dinero
+
+ItemCarrito
+└── precioUnitario : Dinero
+
+LineaPedido
+└── precioUnitario : Dinero
+
+Pedido
+└── total : Dinero
+
+Factura
+├── subtotal : Dinero
+└── total : Dinero
+
+Reembolso
+└── monto : Dinero
+```
+
+## 19. Relación con las entidades
 
 ``` text
 Usuario
- ├── rolUsuario
- └── estado
+├── rol : RolUsuario
+└── estado : EstadoUsuario
 
 Comprador
- └── estadoComprador
+├── estadoComercial : EstadoComprador
+├── direccionPrincipal : Direccion
+└── direccionesAdicionales : List<Direccion>
 
 Vendedor
- └── estadoVendedor
+└── estado : EstadoVendedor
 
 Producto
- ├── tipoProducto
- ├── variantes
- └── estado
+├── tipoProducto : TipoProducto
+├── variantes : List<VarianteProducto>
+├── estado : EstadoProducto
+└── precioActual : Dinero
 
 Bodega
- └── tipoBodega
+└── tipo : TipoBodega
 
-Inventario
- └── estadoExistencia
+MovimientoInventario
+└── tipo : TipoMovimientoInventario
 
 Carrito
- └── estado
+└── estado : EstadoCarrito
 
 Pedido
- └── estado
+├── estado : EstadoPedido
+└── total : Dinero
+
+LineaPedido
+└── precioUnitario : Dinero
+
+ItemCarrito
+└── precioUnitario : Dinero
 
 Envio
- └── estado
+├── estado : EstadoEnvio
+└── direccionEntrega : Direccion
 
 Devolucion
- └── estado
+└── estado : EstadoDevolucion
 
 Reembolso
- └── estado
+├── estado : EstadoReembolso
+└── monto : Dinero
+
+Factura
+├── subtotal : Dinero
+└── total : Dinero
 ```
 
-------------------------------------------------------------------------
+## 20. Diferencia entre Entidad y Value Object
 
-# Rol, Estado y Función
+### Entidad
 
-Estos tres conceptos cumplen funciones diferentes dentro del modelo.
+Una entidad posee identidad propia.
 
-## Rol
-
-Indica qué responsabilidad tiene el usuario.
+Ejemplo:
 
 ``` text
-rolUsuario = VENDEDOR
+Pedido
+idPedido = 1001
 ```
 
-Significa que el usuario participa como vendedor.
+Aunque cambie su estado, continúa siendo el mismo pedido.
 
-## Estado
+### Value Object
 
-Indica en qué situación se encuentra actualmente una entidad.
+Un Value Object se identifica por sus valores.
+
+Ejemplo:
 
 ``` text
-estado = PUBLICADO
+Dinero
+monto = 50000
+moneda = COP
 ```
 
-Significa que el producto está publicado en el catálogo.
+Lo importante es el valor que representa y no un identificador propio.
 
-## Función
+## 21. Diferencia entre estado y movimiento
 
-Representa una acción que realiza el sistema o un participante.
+### Estado
 
-Por ejemplo:
+Representa la situación actual:
 
 ``` text
-registrarProducto
-confirmarPedido
-gestionarEnvio
+Pedido
+estado = PAGADO
 ```
 
-Por lo tanto, el rol y el estado representan información del dominio,
-mientras que las funciones representan acciones del proceso.
+### Movimiento
 
-------------------------------------------------------------------------
+Representa una operación:
 
-# Reglas de los Value Objects
+``` text
+MovimientoInventario
+tipo = SALIDA_VENTA
+```
 
-## Valores controlados
+Por esta razón, `EstadoInventario` no se utiliza para representar los
+movimientos `INGRESO`, `RESERVA`, `SALIDA_VENTA`, `AJUSTE` y
+`DEVOLUCION`.
 
-Los valores utilizados para roles, tipos y estados deben mantenerse de
-forma consistente.
+## 22. Reglas de los Value Objects
 
-Por ejemplo, para un producto se debe utilizar un valor definido como:
+### Valores controlados
+
+Los valores que tienen un catálogo definido deben mantenerse
+consistentes.
+
+Ejemplo:
 
 ``` text
 PUBLICADO
 ```
 
-y no diferentes textos para representar la misma condición.
+debe representar siempre el estado publicado de un producto.
 
-## Significado del valor
+### Significado
 
 Cada valor debe tener un significado claro dentro del negocio.
 
@@ -517,7 +589,9 @@ Por ejemplo:
 FISICO
 ```
 
-representa un producto que requiere inventario y despacho, mientras que:
+representa un producto que requiere inventario y despacho.
+
+Mientras:
 
 ``` text
 DIGITAL
@@ -525,18 +599,14 @@ DIGITAL
 
 representa un producto cuya entrega es inmediata después del pago.
 
-## Relación con las entidades
+### Inmutabilidad conceptual
 
-Los Value Objects se utilizan como parte de la información de las
-entidades y ayudan a representar conceptos que tienen valores
-controlados.
+Los Value Objects deben tratarse como valores y no como objetos con
+identidad independiente.
 
-------------------------------------------------------------------------
+## 23. Resumen
 
-# Resumen
-
-Los principales Value Objects y valores controlados identificados para
-Ecommerce son:
+Los Value Objects definidos para NexusMarket son:
 
 ``` text
 RolUsuario
@@ -545,20 +615,18 @@ EstadoComprador
 EstadoVendedor
 TipoProducto
 EstadoProducto
-VariantesProducto
+VarianteProducto
 TipoBodega
-EstadoInventario
+TipoMovimientoInventario
 EstadoCarrito
 EstadoPedido
 EstadoEnvio
 EstadoDevolucion
 EstadoReembolso
+Direccion
+Dinero
 ```
 
-Estos valores permiten representar de manera organizada los diferentes
-roles, estados, tipos y características que intervienen en el
-funcionamiento del marketplace.
-
-Su utilización ayuda a mantener una estructura clara del dominio y
-facilita la comprensión de los procesos relacionados con usuarios,
-productos, inventario, compras, pedidos, logística y posventa.
+Estos objetos permiten representar conceptos del negocio de forma
+explícita y reducen el uso de tipos genéricos como `String` y `double`
+cuando existe un significado de dominio específico.

@@ -1,40 +1,27 @@
-package com.ecommerce.domain.valueobjects;
+package application.domain.valueobjects;
 
 /**
- * TipoProducto
- * ------------
- * Diferencia los productos ofrecidos en Ecommerce según la forma en
- * que son entregados. (Producto.tipoProducto)
+ * TipoProducto diferencia los productos según la forma en que se entregan.
+ *
+ * Fuente: Domain Value Objects — NexusMarket, sección 7.
  */
-public enum TipoProducto implements DomainCatalog {
+public enum TipoProducto {
+    FISICO("Físico", "Requiere inventario y despacho."),
+    DIGITAL("Digital", "Tiene entrega inmediata después del pago.");
 
-    FISICO("FISICO", "Físico",
-            "Producto que requiere inventario y despacho."),
-    DIGITAL("DIGITAL", "Digital",
-            "Producto cuya entrega se realiza de forma inmediata después del pago.");
+    private final String nombre;
+    private final String descripcion;
 
-    private final String code;
-    private final String name;
-    private final String description;
-
-    TipoProducto(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
+    TipoProducto(String nombre, String descripcion) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
     }
 
-    @Override
-    public String getCode() {
-        return code;
+    public String getNombre() {
+        return nombre;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public String getDescripcion() {
+        return descripcion;
     }
 }

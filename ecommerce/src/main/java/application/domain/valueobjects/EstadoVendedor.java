@@ -1,43 +1,20 @@
-package com.ecommerce.domain.valueobjects;
+package application.domain.valueobjects;
 
 /**
- * EstadoVendedor
- * --------------
- * Representa la situación actual del vendedor dentro de Ecommerce,
- * controlando si se encuentra habilitado para operar. (Vendedor.estadoVendedor)
+ * EstadoVendedor representa la situación actual del vendedor dentro de
+ * NexusMarket.
  *
+ * La especificación contempla el estado del vendedor, pero no define un
+ * catálogo completo de valores permitidos.
+ *
+ * Fuente: Domain Value Objects — NexusMarket, sección 6.
  */
-public enum EstadoVendedor implements DomainCatalog {
+public record EstadoVendedor(String codigo) {
 
-    ACTIVO("ACTIVO", "Activo",
-            "El vendedor se encuentra habilitado para registrar y administrar productos."),
-    SUSPENDIDO("SUSPENDIDO", "Suspendido",
-            "El vendedor tiene restringida temporalmente su operación."),
-    INACTIVO("INACTIVO", "Inactivo",
-            "El vendedor no se encuentra habilitado dentro de la plataforma.");
-
-    private final String code;
-    private final String name;
-    private final String description;
-
-    EstadoVendedor(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public EstadoVendedor {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El estado del vendedor no puede ser vacío.");
+        }
+        codigo = codigo.trim().toUpperCase();
     }
 }

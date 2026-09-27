@@ -1,48 +1,20 @@
-package com.ecommerce.domain.valueobjects;
+package application.domain.valueobjects;
 
 /**
- * EstadoDevolucion
- * ----------------
- * Representa la situación de una devolución asociada a un pedido, desde
- * que se solicita hasta que finaliza. (Devolucion.estado)
+ * EstadoDevolucion representa la situación de una devolución asociada a un
+ * pedido, desde la solicitud hasta su finalización.
  *
- 
+ * La especificación contempla devoluciones pero no entrega un catálogo
+ * detallado de estados.
+ *
+ * Fuente: Domain Value Objects — NexusMarket, sección 15.
  */
-public enum EstadoDevolucion implements DomainCatalog {
+public record EstadoDevolucion(String codigo) {
 
-    SOLICITADA("SOLICITADA", "Solicitada",
-            "El comprador solicitó la devolución del producto."),
-    EN_REVISION("EN_REVISION", "En revisión",
-            "La solicitud de devolución está siendo evaluada."),
-    APROBADA("APROBADA", "Aprobada",
-            "La devolución fue aprobada y continúa su proceso."),
-    RECHAZADA("RECHAZADA", "Rechazada",
-            "La devolución fue rechazada."),
-    FINALIZADA("FINALIZADA", "Finalizada",
-            "El proceso de devolución se completó.");
-
-    private final String code;
-    private final String name;
-    private final String description;
-
-    EstadoDevolucion(String code, String name, String description) {
-        this.code = code;
-        this.name = name;
-        this.description = description;
-    }
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public EstadoDevolucion {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El estado de la devolución no puede ser vacío.");
+        }
+        codigo = codigo.trim().toUpperCase();
     }
 }
