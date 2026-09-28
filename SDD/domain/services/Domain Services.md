@@ -8,13 +8,6 @@ En este modelo se utilizan únicamente cuando una regla necesita coordinar difer
 
 Los servicios de dominio no representan personas, procesos técnicos ni componentes de infraestructura. Su responsabilidad es ejecutar reglas propias del negocio.
 
-El diseño se basa en:
-
-- Domain-Driven Design (DDD).
-- Los agregados definidos en el Domain Model.
-- Las reglas de negocio de la especificación funcional de Ecommerce.
-- La separación entre dominio y tecnología propuesta por Arquitectura Hexagonal.
-
 ---
 
 ## 2. ¿Por qué Ecommerce necesita Domain Services?
@@ -93,19 +86,6 @@ Los servicios deben ser principalmente **stateless**.
 
 Reciben los objetos necesarios, ejecutan una regla y devuelven el resultado.
 
-### 3.3 No contienen lógica de infraestructura
-
-No deben acceder directamente a:
-
-- Bases de datos.
-- APIs externas.
-- Frameworks.
-- Controladores HTTP.
-- Repositorios concretos.
-- Servicios de correo.
-- Sistemas de pago externos.
-
-Cuando una operación necesita información externa, posteriormente se utilizarán puertos/repositorios desde la capa correspondiente de Arquitectura Hexagonal.
 
 ### 3.4 No reemplazan a las entidades
 
