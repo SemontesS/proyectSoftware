@@ -1,12 +1,15 @@
-# Domain Model --- NexusMarket
+# Domain Model --- Ecommerce
+
 
 ## 1. Introducción
 
-El Modelo de Dominio de **NexusMarket** representa los principales
+El Modelo de Dominio de **Ecommerce
+** representa los principales
 conceptos del negocio que participan en la operación de la plataforma y
 las relaciones existentes entre ellos.
 
-NexusMarket funciona como un marketplace que actúa como intermediario
+Ecommerce
+ funciona como un marketplace que actúa como intermediario
 entre compradores y vendedores. La plataforma permite gestionar
 usuarios, vendedores, compradores, productos, bodegas, inventario,
 carritos, pedidos, facturación, envíos, devoluciones y reembolsos.
@@ -83,7 +86,8 @@ del dominio.
 
 `Usuario` representa a una persona que participa en la plataforma.
 Contiene la información común necesaria para identificar al participante
-y determinar su rol y estado dentro de NexusMarket.
+y determinar su rol y estado dentro de Ecommerce
+.
 
 ### Atributos
 
@@ -109,7 +113,8 @@ y determinar su rol y estado dentro de NexusMarket.
 ### Descripción
 
 `Comprador` representa al participante que adquiere productos dentro de
-NexusMarket.
+Ecommerce
+.
 
 ### Atributos
 
@@ -149,7 +154,8 @@ Comprador
 ### Descripción
 
 `Vendedor` representa al participante encargado de registrar y
-administrar los productos que comercializa dentro de NexusMarket.
+administrar los productos que comercializa dentro de Ecommerce
+.
 
 ### Atributos
 
@@ -179,7 +185,8 @@ Vendedor
 ### Descripción
 
 `Producto` representa un bien físico o digital que puede ser ofrecido
-dentro del catálogo de NexusMarket.
+dentro del catálogo de Ecommerce
+.
 
 ### Atributos
 
@@ -683,7 +690,8 @@ Comprador
 
 ## 24. Resumen
 
-El modelo de dominio de NexusMarket se organiza alrededor de usuarios,
+El modelo de dominio de Ecommerce
+ se organiza alrededor de usuarios,
 compradores, vendedores, productos, bodegas, inventario, carritos,
 pedidos y los procesos de facturación, logística y posventa.
 

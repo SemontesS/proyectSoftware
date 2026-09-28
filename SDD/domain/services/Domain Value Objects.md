@@ -1,11 +1,11 @@
-# Domain Value Objects --- NexusMarket
+# Domain Value Objects --- Ecommerce
 
 ## 1. Introducción
 
 Los **Value Objects** representan conceptos del dominio cuyo significado
 depende del valor que contienen y no de una identidad propia.
 
-En NexusMarket permiten representar de manera clara conceptos como
+En Ecommerce permiten representar de manera clara conceptos como
 roles, estados, tipos de producto, direcciones, dinero y tipos de
 movimientos de inventario.
 
@@ -37,7 +37,7 @@ Domain Value Objects
 ### Descripción
 
 `RolUsuario` representa la responsabilidad que tiene un usuario dentro
-de NexusMarket.
+de Ecommerce.
 
 Cada usuario posee un único rol.
 
@@ -114,7 +114,7 @@ valores adicionales.
 ### Descripción
 
 `EstadoVendedor` representa la situación actual del vendedor dentro de
-NexusMarket.
+Ecommerce.
 
 ### Uso
 
@@ -606,7 +606,7 @@ identidad independiente.
 
 ## 23. Resumen
 
-Los Value Objects definidos para NexusMarket son:
+Los Value Objects definidos para Ecommerce son:
 
 ``` text
 RolUsuario
