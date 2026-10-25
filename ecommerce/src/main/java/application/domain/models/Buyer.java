@@ -22,7 +22,7 @@ public class Buyer extends User {
 
     public Buyer(Long userId, String name, String email, String identityDocument,
                  UserStatus status, Address primaryAddress, BuyerStatus commercialStatus) {
-        super(userId, name, email, identityDocument, UserRole.BUYER, status);
+        super(userId, name, email,  identityDocument, UserRole.BUYER, status);
         this.primaryAddress = Objects.requireNonNull(primaryAddress, "Primary address is required.");
         this.commercialStatus = Objects.requireNonNull(commercialStatus, "Commercial status is required.");
     }
