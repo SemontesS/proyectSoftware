@@ -1,6 +1,5 @@
 # Domain Model --- Ecommerce
 
-
 ## 1. Introducción
 
 El Modelo de Dominio de **Ecommerce

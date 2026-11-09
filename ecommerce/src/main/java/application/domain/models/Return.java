@@ -1,5 +1,6 @@
 package application.domain.models;
 
+import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.valueobjects.Money;
 import application.domain.valueobjects.RefundStatus;
 import application.domain.valueobjects.ReturnStatus;
@@ -11,6 +12,10 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Return of an order. Lifecycle: REQUESTED -> RECEIVED -> APPROVED | REJECTED, where the last
+ * step is the outcome of the refund decision. A return generates at most one refund.
+ */
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Return {
@@ -32,17 +37,43 @@ public class Return {
         this.status = Objects.requireNonNull(status, "Return status is required.");
     }
 
-    public void changeStatus(ReturnStatus status) {
-        this.status = Objects.requireNonNull(status, "Return status is required.");
+    /** The returned goods arrived at the marketplace. */
+    public void receive() {
+        if (status != ReturnStatus.REQUESTED) {
+            throw new BusinessRuleViolationException("Invalid return status transition: " + status + " -> RECEIVED");
+        }
+        status = ReturnStatus.RECEIVED;
     }
 
-    public Refund generateRefund(Long refundId, Money amount, LocalDate date, RefundStatus initialStatus) {
-        if (refund != null) throw new IllegalStateException("A return can generate at most one refund.");
-        refund = new Refund(refundId, returnId, amount, date, initialStatus);
+    public Refund generateRefund(Long refundId, Money amount, LocalDate date) {
+        if (status != ReturnStatus.RECEIVED) {
+            throw new BusinessRuleViolationException("A refund can only be generated for a received return.");
+        }
+        if (refund != null) throw new BusinessRuleViolationException("A return can generate at most one refund.");
+        refund = new Refund(refundId, returnId, amount, date, RefundStatus.PENDING);
         return refund;
+    }
+
+    public Refund approveRefund() {
+        Refund current = requireRefund();
+        current.approve();
+        status = ReturnStatus.APPROVED;
+        return current;
+    }
+
+    public Refund rejectRefund() {
+        Refund current = requireRefund();
+        current.reject();
+        status = ReturnStatus.REJECTED;
+        return current;
     }
 
     public Optional<Refund> getRefund() {
         return Optional.ofNullable(refund);
+    }
+
+    private Refund requireRefund() {
+        if (refund == null) throw new BusinessRuleViolationException("The return has no refund to decide.");
+        return refund;
     }
 }

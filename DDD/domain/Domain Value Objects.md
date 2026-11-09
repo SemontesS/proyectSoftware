@@ -28,8 +28,14 @@ Domain Value Objects
 ├── EstadoEnvio
 ├── EstadoDevolucion
 ├── EstadoReembolso
+├── TipoDireccion
 ├── Direccion
-└── Dinero
+├── Moneda
+├── Dinero
+├── CorreoElectronico
+├── DocumentoIdentidad
+├── Sku
+└── NumeroFactura
 ```
 
 ## 3. RolUsuario
@@ -256,8 +262,10 @@ Es diferente de un estado porque representa una operación o movimiento.
   -------------- ------------------ ----------------------------
   INGRESO        Ingreso            Entrada de existencias.
   RESERVA        Reserva            Separación de existencias.
+  LIBERACION     Liberación         Una reserva vuelve a disponible.
   SALIDA_VENTA   Salida por venta   Disminución por una venta.
   AJUSTE         Ajuste             Corrección de existencias.
+  MARCADO_DANADO Marcado dañado     Existencias disponibles pasan a dañadas.
   DEVOLUCION     Devolución         Reingreso de existencias.
 
 ### Uso
@@ -308,6 +316,7 @@ PAGADO
 DESPACHADO
 ENTREGADO
 FINALIZADO
+CANCELADO
 ```
 
 ### Ciclo
@@ -331,6 +340,7 @@ concepto independiente que precede a la creación del pedido.
 
 ``` text
 FINALIZADO → no puede modificarse
+CANCELADO  → no puede modificarse
 ```
 
 ## 14. EstadoEnvio
@@ -401,9 +411,9 @@ lugar de entrega.
 
   Atributo   Tipo     Descripción
   ---------- -------- ------------------------------
-  tipo       String   Tipo de dirección.
-  detalle    String   Información de la dirección.
-  ciudad     String   Ciudad de la dirección.
+  tipo       TipoDireccion   Propósito de la dirección.
+  detalle    String          Información de la dirección.
+  ciudad     String          Ciudad de la dirección.
 
 ### Uso
 
@@ -429,8 +439,8 @@ Permite evitar que conceptos monetarios importantes sean manejados
 
   Atributo   Tipo      Descripción
   ---------- --------- -------------------
-  monto      Decimal   Valor monetario.
-  moneda     String    Moneda utilizada.
+  monto      Decimal   Valor monetario (no negativo).
+  moneda     Moneda    Moneda utilizada.
 
 ### Uso
 
@@ -454,6 +464,36 @@ Factura
 Reembolso
 └── monto : Dinero
 ```
+
+## 18.1 Valores adoptados en la implementación
+
+La especificación funcional no define estos catálogos; se adoptaron los
+siguientes valores mínimos en el código y **deben confirmarse** con el
+docente o la especificación:
+
+| Value Object | Valores |
+|---|---|
+| EstadoUsuario | `ACTIVO`, `BLOQUEADO` |
+| EstadoComprador | `HABILITADO`, `RESTRINGIDO` |
+| EstadoVendedor | `ACTIVO`, `SUSPENDIDO` |
+| EstadoBodega | `ACTIVA`, `INACTIVA` |
+| EstadoEnvio | `PENDIENTE`, `EN_PREPARACION`, `DESPACHADO`, `ENTREGADO` |
+| EstadoDevolucion | `SOLICITADA`, `APROBADA`, `RECHAZADA`, `RECIBIDA` |
+| EstadoReembolso | `PENDIENTE`, `APROBADO`, `PAGADO`, `RECHAZADO` |
+| TipoDireccion | `CASA`, `TRABAJO`, `OTRO` |
+| Moneda | `COP`, `USD`, `EUR` |
+
+## 18.2 Value Objects de identificación y formato
+
+Reemplazan `String` abiertos por tipos con validación propia.
+
+| Value Object | Código Java | Regla |
+|---|---|---|
+| Moneda | `Currency` (enum) | Solo monedas soportadas. |
+| CorreoElectronico | `Email` | Obligatorio, formato `x@dominio.tld`, se normaliza a minúsculas. La unicidad la garantiza el repositorio. |
+| DocumentoIdentidad | `IdentityDocument` | Obligatorio, sin espacios sobrantes. La unicidad la garantiza el repositorio. |
+| Sku | `Sku` | Obligatorio, se normaliza a mayúsculas. Identifica una variante. |
+| NumeroFactura | `InvoiceNumber` | Obligatorio. |
 
 ## 19. Relación con las entidades
 
@@ -623,10 +663,22 @@ EstadoPedido
 EstadoEnvio
 EstadoDevolucion
 EstadoReembolso
+TipoDireccion
 Direccion
+Moneda
 Dinero
+CorreoElectronico
+DocumentoIdentidad
+Sku
+NumeroFactura
 ```
 
 Estos objetos permiten representar conceptos del negocio de forma
 explícita y reducen el uso de tipos genéricos como `String` y `double`
 cuando existe un significado de dominio específico.
+
+## 27. Permission (Permiso)
+
+Enum que lista cada operación que un usuario puede ejecutar y los roles que la
+tienen permitida (código: `Permission`). La matriz completa está en
+`Domain Services.md`, sección 14.3. Se evalúa en `ValidateUserPermissionsService`.

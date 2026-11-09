@@ -1,5 +1,7 @@
 package application.domain.models;
 
+import application.domain.valueobjects.Email;
+import application.domain.valueobjects.IdentityDocument;
 import application.domain.valueobjects.SellerStatus;
 import application.domain.valueobjects.UserRole;
 import application.domain.valueobjects.UserStatus;
@@ -13,7 +15,7 @@ import java.util.Objects;
 public class Seller extends User {
     private SellerStatus sellerStatus;
 
-    public Seller(Long userId, String name, String email, String identityDocument,
+    public Seller(Long userId, String name, Email email, IdentityDocument identityDocument,
                   UserStatus status, SellerStatus sellerStatus) {
         super(userId, name, email, identityDocument, UserRole.SELLER, status);
         this.sellerStatus = Objects.requireNonNull(sellerStatus, "Seller status is required.");

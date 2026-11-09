@@ -1,16 +1,14 @@
 package application.domain.models;
 
 import application.domain.valueobjects.InventoryMovementType;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/** Internal element of the Inventory aggregate. Identity is assigned by persistence, so it may be null. */
 @Getter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InventoryMovement {
-    @EqualsAndHashCode.Include
     private final Long movementId;
     private final InventoryMovementType type;
     private final int quantity;
@@ -28,16 +26,11 @@ public class InventoryMovement {
         this.date = Objects.requireNonNullElseGet(date, LocalDateTime::now);
     }
 
-    /** Legacy accessor retained because the existing model exposed this name. */
-    public int getCantidad() {
-        return quantity;
-    }
-
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
         if (!(other instanceof InventoryMovement that)) return false;
-        if (movementId == null || that.movementId == null) return this == other;
+        if (movementId == null || that.movementId == null) return false;
         return movementId.equals(that.movementId);
     }
 

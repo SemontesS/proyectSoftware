@@ -2,6 +2,8 @@ package application.domain.models;
 
 import application.domain.valueobjects.Address;
 import application.domain.valueobjects.BuyerStatus;
+import application.domain.valueobjects.Email;
+import application.domain.valueobjects.IdentityDocument;
 import application.domain.valueobjects.UserRole;
 import application.domain.valueobjects.UserStatus;
 import lombok.AccessLevel;
@@ -20,9 +22,9 @@ public class Buyer extends User {
     private final List<Address> additionalAddresses = new ArrayList<>();
     private BuyerStatus commercialStatus;
 
-    public Buyer(Long userId, String name, String email, String identityDocument,
+    public Buyer(Long userId, String name, Email email, IdentityDocument identityDocument,
                  UserStatus status, Address primaryAddress, BuyerStatus commercialStatus) {
-        super(userId, name, email,  identityDocument, UserRole.BUYER, status);
+        super(userId, name, email, identityDocument, UserRole.BUYER, status);
         this.primaryAddress = Objects.requireNonNull(primaryAddress, "Primary address is required.");
         this.commercialStatus = Objects.requireNonNull(commercialStatus, "Commercial status is required.");
     }

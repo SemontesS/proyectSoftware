@@ -1,5 +1,6 @@
 package application.domain.models;
 
+import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.valueobjects.Address;
 import application.domain.valueobjects.ShipmentStatus;
 import lombok.EqualsAndHashCode;
@@ -7,6 +8,7 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+/** Logistic process of one order from one warehouse: PENDING, PREPARING, SHIPPED, DELIVERED. */
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Shipment {
@@ -26,7 +28,22 @@ public class Shipment {
         this.deliveryAddress = Objects.requireNonNull(deliveryAddress, "Delivery address is required.");
     }
 
-    public void changeStatus(ShipmentStatus status) {
-        this.status = Objects.requireNonNull(status, "Shipment status is required.");
+    public void prepare() {
+        transition(ShipmentStatus.PENDING, ShipmentStatus.PREPARING);
+    }
+
+    public void dispatch() {
+        transition(ShipmentStatus.PREPARING, ShipmentStatus.SHIPPED);
+    }
+
+    public void confirmDelivery() {
+        transition(ShipmentStatus.SHIPPED, ShipmentStatus.DELIVERED);
+    }
+
+    private void transition(ShipmentStatus expected, ShipmentStatus next) {
+        if (status != expected) {
+            throw new BusinessRuleViolationException("Invalid shipment status transition: " + status + " -> " + next);
+        }
+        status = next;
     }
 }

@@ -1,6 +1,8 @@
 package application.domain.models;
 
+import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.valueobjects.InventoryMovementType;
+import application.domain.valueobjects.Sku;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +18,7 @@ public class Inventory {
     @EqualsAndHashCode.Include
     private final Long inventoryId;
     private final Long productId;
-    private final String sku;
+    private final Sku sku;
     private final Long warehouseId;
     private int availableQuantity;
     private int reservedQuantity;
@@ -24,15 +26,15 @@ public class Inventory {
     @Getter(AccessLevel.NONE)
     private final List<InventoryMovement> movements = new ArrayList<>();
 
-    public Inventory(Long inventoryId, Long productId, Long warehouseId, int availableQuantity) {
-        this(inventoryId, productId, "DEFAULT", warehouseId, availableQuantity, 0, 0);
+    public Inventory(Long inventoryId, Long productId, Sku sku, Long warehouseId, int availableQuantity) {
+        this(inventoryId, productId, sku, warehouseId, availableQuantity, 0, 0);
     }
 
-    public Inventory(Long inventoryId, Long productId, String sku, Long warehouseId,
+    public Inventory(Long inventoryId, Long productId, Sku sku, Long warehouseId,
                      int availableQuantity, int reservedQuantity, int damagedQuantity) {
         this.inventoryId = Objects.requireNonNull(inventoryId, "Inventory ID is required.");
         this.productId = Objects.requireNonNull(productId, "Product ID is required.");
-        this.sku = requireSku(sku);
+        this.sku = Objects.requireNonNull(sku, "SKU is required.");
         this.warehouseId = Objects.requireNonNull(warehouseId, "Warehouse ID is required.");
         validateNonNegative(availableQuantity, "Available quantity");
         validateNonNegative(reservedQuantity, "Reserved quantity");
@@ -50,7 +52,7 @@ public class Inventory {
 
     public void recordReservation(int quantity) {
         requirePositive(quantity);
-        if (availableQuantity < quantity) throw new IllegalStateException("Insufficient available inventory.");
+        if (availableQuantity < quantity) throw new BusinessRuleViolationException("Insufficient available inventory.");
         availableQuantity -= quantity;
         reservedQuantity += quantity;
         movements.add(new InventoryMovement(InventoryMovementType.RESERVATION, quantity, LocalDateTime.now()));
@@ -58,7 +60,7 @@ public class Inventory {
 
     public void releaseReservation(int quantity) {
         requirePositive(quantity);
-        if (reservedQuantity < quantity) throw new IllegalStateException("Insufficient reserved inventory.");
+        if (reservedQuantity < quantity) throw new BusinessRuleViolationException("Insufficient reserved inventory.");
         reservedQuantity -= quantity;
         availableQuantity += quantity;
         movements.add(new InventoryMovement(InventoryMovementType.RELEASE, quantity, LocalDateTime.now()));
@@ -68,7 +70,7 @@ public class Inventory {
         requirePositive(quantity);
         if (reservedQuantity >= quantity) reservedQuantity -= quantity;
         else if (availableQuantity >= quantity) availableQuantity -= quantity;
-        else throw new IllegalStateException("Insufficient inventory for sale.");
+        else throw new BusinessRuleViolationException("Insufficient inventory for sale.");
         movements.add(new InventoryMovement(InventoryMovementType.SALE_OUTBOUND, quantity, LocalDateTime.now()));
     }
 
@@ -80,17 +82,18 @@ public class Inventory {
 
     public void markDamaged(int quantity) {
         requirePositive(quantity);
-        if (availableQuantity < quantity) throw new IllegalStateException("Insufficient available inventory to mark as damaged.");
+        if (availableQuantity < quantity) throw new BusinessRuleViolationException("Insufficient available inventory to mark as damaged.");
         availableQuantity -= quantity;
         damagedQuantity += quantity;
         movements.add(new InventoryMovement(InventoryMovementType.MARK_DAMAGED, quantity, LocalDateTime.now()));
     }
 
-    public void recordAdjustment(int quantity, int delta) {
-        requirePositive(quantity);
-        if (availableQuantity + delta < 0) throw new IllegalStateException("Inventory cannot become negative.");
+    /** Applies a signed correction (positive or negative) to the available quantity. */
+    public void recordAdjustment(int delta) {
+        if (delta == 0) throw new IllegalArgumentException("Adjustment delta cannot be zero.");
+        if (availableQuantity + delta < 0) throw new BusinessRuleViolationException("Inventory cannot become negative.");
         availableQuantity += delta;
-        movements.add(new InventoryMovement(InventoryMovementType.ADJUSTMENT, quantity, LocalDateTime.now()));
+        movements.add(new InventoryMovement(InventoryMovementType.ADJUSTMENT, Math.abs(delta), LocalDateTime.now()));
     }
 
     public List<InventoryMovement> getMovements() {
@@ -103,10 +106,5 @@ public class Inventory {
 
     private static void validateNonNegative(int quantity, String label) {
         if (quantity < 0) throw new IllegalArgumentException(label + " cannot be negative.");
-    }
-
-    private static String requireSku(String sku) {
-        if (sku == null || sku.isBlank()) throw new IllegalArgumentException("SKU is required.");
-        return sku.trim();
     }
 }

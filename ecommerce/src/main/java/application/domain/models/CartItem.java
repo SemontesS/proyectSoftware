@@ -1,6 +1,7 @@
 package application.domain.models;
 
 import application.domain.valueobjects.Money;
+import application.domain.valueobjects.Sku;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -11,18 +12,14 @@ import java.util.Objects;
 public class CartItem {
     @EqualsAndHashCode.Include
     private final Long productId;
-    private final String sku;
+    @EqualsAndHashCode.Include
+    private final Sku sku;
     private int quantity;
     private final Money unitPrice;
 
-    public CartItem(Long productId, int quantity, Money unitPrice) {
-        this(productId, "DEFAULT", quantity, unitPrice);
-    }
-
-    public CartItem(Long productId, String sku, int quantity, Money unitPrice) {
+    public CartItem(Long productId, Sku sku, int quantity, Money unitPrice) {
         this.productId = Objects.requireNonNull(productId, "Product ID is required.");
-        if (sku == null || sku.isBlank()) throw new IllegalArgumentException("SKU is required.");
-        this.sku = sku.trim();
+        this.sku = Objects.requireNonNull(sku, "SKU is required.");
         this.unitPrice = Objects.requireNonNull(unitPrice, "Unit price is required.");
         changeQuantity(quantity);
     }
@@ -34,10 +31,5 @@ public class CartItem {
 
     public Money getSubtotal() {
         return unitPrice.multiply(quantity);
-    }
-
-    /** Legacy accessor retained because the untouched domain-service files use it. */
-    public int getCantidad() {
-        return quantity;
     }
 }
