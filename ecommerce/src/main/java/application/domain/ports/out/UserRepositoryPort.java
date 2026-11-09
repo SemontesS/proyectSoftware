@@ -17,6 +17,8 @@ public interface UserRepositoryPort {
 
     Optional<User> findById(Long userId);
 
+    Optional<User> findByEmail(Email email);
+
     Optional<Buyer> findBuyerById(Long userId);
 
     Optional<Seller> findSellerById(Long userId);

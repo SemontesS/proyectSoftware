@@ -2,6 +2,7 @@ package application.domain.services.inventory;
 
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.models.Inventory;
+import application.domain.models.InventoryAllocation;
 import application.domain.models.User;
 import application.domain.ports.out.InventoryRepositoryPort;
 import application.domain.ports.out.WarehouseRepositoryPort;
@@ -30,23 +31,16 @@ public class ReserveInventoryService {
     private final WarehouseRepositoryPort warehouseRepositoryPort;
     private final ValidateUserPermissionsService permissions;
 
-    /** Part of a reservation taken from one inventory (one warehouse). */
-    public record Allocation(Inventory inventory, int quantity) {
-        public Long warehouseId() {
-            return inventory.getWarehouseId();
-        }
-    }
-
     /** Reserves stock on behalf of an authorized operator. */
-    public List<Allocation> reserve(User requestingUser, Long productId, Sku sku, int quantity) {
+    public List<InventoryAllocation> reserve(User requestingUser, Long productId, Sku sku, int quantity) {
         permissions.validate(requestingUser, Permission.INVENTORY_RESERVE);
-        List<Allocation> allocations = plan(productId, sku, quantity);
+        List<InventoryAllocation> allocations = plan(productId, sku, quantity);
         apply(allocations);
         return allocations;
     }
 
     /** Computes how the quantity would be taken from the active warehouses. Modifies nothing. */
-    public List<Allocation> plan(Long productId, Sku sku, int quantity) {
+    public List<InventoryAllocation> plan(Long productId, Sku sku, int quantity) {
         if (quantity <= 0) throw new IllegalArgumentException("Quantity to reserve must be greater than zero.");
         List<Inventory> candidates = inventoryRepositoryPort.findByProductAndSku(productId, sku).stream()
                 .filter(inventory -> inventory.getAvailableQuantity() > 0)
@@ -56,12 +50,12 @@ public class ReserveInventoryService {
                 .sorted(Comparator.comparingInt(Inventory::getAvailableQuantity).reversed())
                 .toList();
 
-        List<Allocation> allocations = new ArrayList<>();
+        List<InventoryAllocation> allocations = new ArrayList<>();
         int remaining = quantity;
         for (Inventory inventory : candidates) {
             if (remaining == 0) break;
             int taken = Math.min(remaining, inventory.getAvailableQuantity());
-            allocations.add(new Allocation(inventory, taken));
+            allocations.add(new InventoryAllocation(inventory, taken));
             remaining -= taken;
         }
         if (remaining > 0) {
@@ -72,8 +66,8 @@ public class ReserveInventoryService {
     }
 
     /** Applies and persists a previously planned reservation. */
-    public void apply(List<Allocation> allocations) {
-        for (Allocation allocation : allocations) {
+    public void apply(List<InventoryAllocation> allocations) {
+        for (InventoryAllocation allocation : allocations) {
             allocation.inventory().recordReservation(allocation.quantity());
             inventoryRepositoryPort.save(allocation.inventory());
         }

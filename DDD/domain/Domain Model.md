@@ -1,5 +1,6 @@
 # Domain Model --- Ecommerce
 
+
 ## 1. Introducción
 
 El Modelo de Dominio de **Ecommerce
@@ -94,8 +95,8 @@ y determinar su rol y estado dentro de Ecommerce
   -------------------- ----------------- --------------------------------------------
   idUsuario            Identificador     Identifica de forma única al usuario.
   nombre               String            Nombre completo del usuario.
-  correoElectronico    String            Correo electrónico del usuario.
-  documentoIdentidad   String            Documento de identificación.
+  correoElectronico    CorreoElectronico Correo electrónico válido y normalizado.
+  documentoIdentidad   DocumentoIdentidad Documento de identificación.
   rol                  RolUsuario        Rol que desempeña dentro de la plataforma.
   estado               EstadoUsuario     Estado operativo del usuario.
 
@@ -287,17 +288,25 @@ bodega específica.
   Atributo             Tipo conceptual   Descripción
   -------------------- ----------------- -------------------------------
   idInventario         Identificador     Identificador del inventario.
-  cantidadDisponible   Cantidad          Existencias disponibles.
-  producto             Producto          Producto al que corresponde.
-  bodega               Bodega            Bodega donde se almacena.
+  idProducto           Identificador     Producto al que corresponde.
+  sku                  Sku               Variante del producto almacenada.
+  idBodega             Identificador     Bodega donde se almacena.
+  cantidadDisponible   Entero            Existencias disponibles.
+  cantidadReservada    Entero            Existencias separadas por pedidos.
+  cantidadDanada       Entero            Existencias marcadas como dañadas.
+  movimientos          List<Movimiento>  Historial de movimientos.
 
 ### Regla principal
 
 ``` text
 cantidadDisponible >= 0
+cantidadReservada  >= 0
+cantidadDanada     >= 0
 ```
 
-No se permiten existencias negativas.
+No se permiten existencias negativas. Un ajuste de inventario se aplica
+como una diferencia con signo (`delta`) y no puede dejar la cantidad
+disponible por debajo de cero.
 
 ## 11. MovimientoInventario
 
@@ -311,10 +320,16 @@ el comportamiento de las existencias.
 ``` text
 INGRESO
 RESERVA
+LIBERACION
 SALIDA_VENTA
 AJUSTE
+MARCADO_DANADO
 DEVOLUCION
 ```
+
+`LIBERACION` (devuelve a disponible una reserva cancelada) y
+`MARCADO_DANADO` (mueve existencias disponibles a dañadas) se añadieron
+al implementar el inventario con cantidades reservada y dañada.
 
 ### Relación
 
@@ -336,8 +351,10 @@ productos antes de confirmar la compra.
   Atributo        Tipo conceptual   Descripción
   --------------- ----------------- ----------------------------
   idCarrito       Identificador     Identificador del carrito.
+  idComprador     Identificador     Comprador propietario.
   fechaCreacion   Fecha             Fecha de creación.
-  total           Dinero            Valor acumulado.
+  moneda          Moneda            Moneda única del carrito.
+  total           Dinero            Valor acumulado (calculado).
   estado          EstadoCarrito     Estado actual.
 
 ### Relaciones
@@ -365,9 +382,10 @@ es un elemento interno del agregado `Carrito`.
 
   Atributo         Tipo conceptual   Descripción
   ---------------- ----------------- -------------------------------
-  cantidad         Cantidad          Unidades seleccionadas.
+  idProducto       Identificador     Producto seleccionado.
+  sku              Sku               Variante seleccionada.
+  cantidad         Entero (> 0)      Unidades seleccionadas.
   precioUnitario   Dinero            Precio aplicado al agregarlo.
-  producto         Producto          Producto seleccionado.
 
 ## 14. Pedido
 
@@ -381,9 +399,11 @@ comprador confirma su carrito.
   Atributo        Tipo conceptual              Descripción
   --------------- ---------------------------- ---------------------------
   idPedido        Identificador                Identificador del pedido.
+  idComprador     Identificador                Comprador que lo realiza.
   fechaCreacion   Fecha                        Fecha de creación.
+  moneda          Moneda                       Moneda única del pedido.
   estado          EstadoPedido                 Estado actual.
-  total           Dinero                       Valor total.
+  total           Dinero                       Valor total (calculado).
   lineas          List`<LineaPedido>`{=html}   Productos incluidos.
 
 ### Relaciones
@@ -413,15 +433,30 @@ PAGADO
    ↓
 DESPACHADO
    ↓
-ENTREGADO / FINALIZADO
+ENTREGADO
+   ↓
+FINALIZADO
 ```
+
+Transiciones válidas:
+
+``` text
+PENDIENTE_PAGO → PAGADO | CANCELADO
+PAGADO         → DESPACHADO | CANCELADO | FINALIZADO (productos digitales)
+DESPACHADO     → ENTREGADO
+ENTREGADO      → FINALIZADO
+FINALIZADO     → (ninguna)
+CANCELADO      → (ninguna)
+```
+
+`CANCELADO` solo es posible antes del despacho.
 
 `Carrito` no es un estado de `Pedido`; es un concepto independiente que
 precede a la creación del pedido.
 
 ### Regla
 
-Un pedido finalizado no puede modificarse.
+Un pedido finalizado o cancelado no puede modificarse.
 
 ## 15. LineaPedido
 
@@ -434,9 +469,12 @@ elemento interno del agregado `Pedido`.
 
   Atributo         Tipo conceptual   Descripción
   ---------------- ----------------- ------------------------------------------
-  cantidad         Cantidad          Unidades solicitadas.
+  idProducto       Identificador     Producto adquirido.
+  sku              Sku               Variante adquirida.
+  idVendedor       Identificador     Vendedor (se asigna al preparar el despacho; puede ser nulo al crear el pedido).
+  idBodega         Identificador     Bodega de despacho (ídem).
+  cantidad         Entero (> 0)      Unidades solicitadas.
   precioUnitario   Dinero            Precio aplicado al momento de la compra.
-  producto         Producto          Producto adquirido.
 
 ## 16. Factura
 
@@ -450,7 +488,7 @@ del pedido.
   Atributo    Tipo conceptual   Descripción
   ----------- ----------------- ------------------------------
   idFactura   Identificador     Identificador de la factura.
-  numero      String            Número de factura.
+  numero      NumeroFactura     Número de factura.
   fecha       Fecha             Fecha de emisión.
   subtotal    Dinero            Valor antes del total final.
   total       Dinero            Valor final.
@@ -701,3 +739,63 @@ principales.
 Este modelo constituye la base para la implementación posterior de las
 entidades, Value Objects, casos de uso y puertos de la Arquitectura
 Hexagonal.
+
+## 25. Glosario español ↔ código Java
+
+El SDD se redacta en español y el código Java está 100 % en inglés. Esta
+tabla da la correspondencia exacta entre ambos.
+
+| SDD (español) | Código Java (`application.domain...`) |
+|---|---|
+| Usuario | `models.User` |
+| Comprador | `models.Buyer` |
+| Vendedor | `models.Seller` |
+| Producto | `models.Product` |
+| Bodega | `models.Warehouse` |
+| Inventario | `models.Inventory` |
+| MovimientoInventario | `models.InventoryMovement` |
+| Carrito / ItemCarrito | `models.Cart` / `models.CartItem` |
+| Pedido / LineaPedido | `models.Order` / `models.OrderLine` |
+| Factura | `models.Invoice` |
+| Envio | `models.Shipment` |
+| Devolucion | `models.Return` |
+| Reembolso | `models.Refund` |
+| idUsuario, idProducto, ... | `userId`, `productId`, ... |
+| nombre, correoElectronico, documentoIdentidad | `name`, `email`, `identityDocument` |
+| estado, rol, tipo | `status`, `role`, `type` |
+| cantidadDisponible / Reservada / Danada | `availableQuantity` / `reservedQuantity` / `damagedQuantity` |
+| precioUnitario, precioActual | `unitPrice`, `currentPrice` |
+| direccionPrincipal, direccionesAdicionales | `primaryAddress`, `additionalAddresses` |
+
+## 26. Ajustes del modelo derivados de los servicios
+
+- **UsuarioInterno** (`InternalUser`): usuario del personal con rol
+  `ADMINISTRADOR`, `OPERADOR_LOGISTICO` o `SUPERVISOR`. Compradores y vendedores
+  tienen sus propias clases.
+- **Producto:** ciclo `SUSPENDIDO → PUBLICADO ⇄ SUSPENDIDO` y `DESCONTINUADO`
+  (terminal). Métodos `publicar`, `suspender`, `descontinuar` (`publish`,
+  `suspend`, `discontinue`); ya no existe un cambio de estado libre.
+- **Envio:** `PENDIENTE → EN_PREPARACION → DESPACHADO → ENTREGADO`. Hay un envío
+  por pedido y bodega.
+- **Devolucion:** `SOLICITADA → RECIBIDA → APROBADA | RECHAZADA`. El reembolso se
+  genera solo con la devolución `RECIBIDA` y nace `PENDIENTE`; aprobarlo o
+  rechazarlo fija el estado final de la devolución.
+- **Reembolso:** `PENDIENTE → APROBADO | RECHAZADO`. Solo se modifica a través de
+  la devolución (aggregate root).
+- **Carrito:** agregar la misma variante suma las cantidades; quitar un producto
+  que no está en el carrito es un error.
+- **LineaPedido:** `idBodega` es nulo en productos digitales; en productos físicos
+  identifica la bodega que despacha.
+
+## 27. Credenciales, autenticación y auditoría
+
+- **CredencialesUsuario** (`UserCredentials`): idUsuario, hash de la contraseña y
+  versión del token. Está separada de `Usuario` para que el hash nunca viaje con
+  la entidad. Cambiar la contraseña o cerrar sesión incrementa la versión e invalida
+  todos los tokens emitidos.
+- **ResultadoAutenticacion** (`AuthenticationResult`): token y usuario autenticado.
+- **RegistroAuditoria** (`AuditLog`): idUsuario, operación (un `Permiso`), tipo e id
+  de la entidad afectada, detalle y fecha. Se guarda en MongoDB.
+- **ReporteAdministrativo** (`AdministrativeReport`), **RegistroVendedor**
+  (`SellerRegistration`) y **AsignacionInventario** (`InventoryAllocation`): resultados
+  de servicios, ubicados en el dominio para que los puertos no dependan de los servicios.

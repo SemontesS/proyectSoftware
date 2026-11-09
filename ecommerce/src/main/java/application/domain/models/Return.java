@@ -76,4 +76,12 @@ public class Return {
         if (refund == null) throw new BusinessRuleViolationException("The return has no refund to decide.");
         return refund;
     }
+
+    /** Rebuilds a persisted return with its optional refund. For persistence adapters only. */
+    public static Return restore(Long returnId, Long orderId, String reason, LocalDate date,
+                                 ReturnStatus status, Refund refund) {
+        Return returnRequest = new Return(returnId, orderId, reason, date, status);
+        returnRequest.refund = refund;
+        return returnRequest;
+    }
 }

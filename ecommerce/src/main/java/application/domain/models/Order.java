@@ -100,4 +100,13 @@ public class Order {
     private void validateModifiable() {
         if (!canBeModified()) throw new BusinessRuleViolationException("A completed or cancelled order cannot be modified.");
     }
+
+    /** Rebuilds a persisted order in any status. For persistence adapters only. */
+    public static Order restore(Long orderId, Long buyerId, LocalDateTime createdAt, OrderStatus status,
+                                Currency currency, List<OrderLine> lines) {
+        Order order = new Order(orderId, buyerId, createdAt, currency);
+        order.status = Objects.requireNonNull(status, "Order status is required.");
+        order.lines.addAll(lines);
+        return order;
+    }
 }

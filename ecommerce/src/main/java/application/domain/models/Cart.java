@@ -94,4 +94,13 @@ public class Cart {
     private void validateActive() {
         if (status != CartStatus.ACTIVE) throw new BusinessRuleViolationException("Only an active cart can be modified.");
     }
+
+    /** Rebuilds a persisted cart in any status. For persistence adapters only. */
+    public static Cart restore(Long cartId, Long buyerId, LocalDateTime createdAt, CartStatus status,
+                               Currency currency, List<CartItem> items) {
+        Cart cart = new Cart(cartId, buyerId, createdAt, currency);
+        cart.status = Objects.requireNonNull(status, "Cart status is required.");
+        cart.items.addAll(items);
+        return cart;
+    }
 }

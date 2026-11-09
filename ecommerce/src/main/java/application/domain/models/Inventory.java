@@ -107,4 +107,14 @@ public class Inventory {
     private static void validateNonNegative(int quantity, String label) {
         if (quantity < 0) throw new IllegalArgumentException(label + " cannot be negative.");
     }
+
+    /** Rebuilds a persisted inventory with its full movement history. For persistence adapters only. */
+    public static Inventory restore(Long inventoryId, Long productId, Sku sku, Long warehouseId,
+                                    int availableQuantity, int reservedQuantity, int damagedQuantity,
+                                    List<InventoryMovement> movements) {
+        Inventory inventory = new Inventory(inventoryId, productId, sku, warehouseId,
+                availableQuantity, reservedQuantity, damagedQuantity);
+        inventory.movements.addAll(movements);
+        return inventory;
+    }
 }

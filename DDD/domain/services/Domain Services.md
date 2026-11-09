@@ -7,7 +7,7 @@ Este documento presenta el catálogo general de **Domain Services** propuestos p
 ---
 
 # 1. User Management Services
-    
+
 | Servicio | Responsabilidad |
 |-----------|----------------|
 | Register User | Registra la información de un usuario respetando la unicidad del correo electrónico y del documento de identidad. |
@@ -149,7 +149,7 @@ Este documento presenta el catálogo general de **Domain Services** propuestos p
 
 ## 14. Implementación de los servicios de dominio
 
-Los 51 servicios del catálogo están implementados en
+Los 51 servicios del catálogo (más 6 de soporte, ver 14.3) están implementados en
 `application.domain.services.<grupo>`, una clase por servicio. Cada servicio
 recibe al usuario solicitante (salvo el autorregistro del comprador), valida
 su permiso, carga los aggregates mediante **puertos de salida** (ver
@@ -163,7 +163,7 @@ las excepciones de `application.domain.exceptions`:
 
 | # | Servicio (código) | Permiso | Reglas principales |
 |---|---|---|---|
-| 1 | `authorization.ValidateUserPermissionsService` | — | El usuario debe estar `ACTIVO` y su rol debe tener el permiso (matriz de la sección 14.3). |
+| 1 | `authorization.ValidateUserPermissionsService` | — | El usuario debe estar `ACTIVO` y su rol debe tener el permiso (matriz de la sección 14.4). |
 | 2 | `authorization.ValidateResourceAccessService` | — | Propietario del recurso o rol privilegiado; un vendedor solo accede al inventario de sus productos. |
 | 3 | `user.RegisterUserService` | `USER_REGISTER` | Registra personal interno (administrador, operador logístico, supervisor). Correo y documento únicos. |
 | 4 | `user.ConsultUserService` | `USER_CONSULT` | Cada usuario consulta sus datos; administrador y supervisor consultan cualquiera. |
@@ -236,7 +236,7 @@ criterio indicado y **debe confirmarse con el docente**:
 5. **Facturación:** sin impuestos definidos, subtotal y total son iguales.
 6. **Cancelación de un pedido pagado:** libera el inventario, pero no genera
    reembolso automático (queda fuera de la especificación).
-7. **Permisos por rol** (14.3): se infirieron de las responsabilidades de cada rol.
+7. **Permisos por rol** (14.4): se infirieron de las responsabilidades de cada rol.
 8. **Auditoría y autenticación (contraseñas/JWT):** no están en el catálogo; se
    abordan en los adaptadores.
 9. **Atomicidad:** varios servicios modifican más de un aggregate (carrito,
@@ -244,7 +244,25 @@ criterio indicado y **debe confirmarse con el docente**:
    transacción, y el inventario necesitará control de concurrencia (versión
    optimista) en la persistencia.
 
-### 14.3 Matriz de permisos por rol
+### 14.3 Servicios de soporte (autenticación y auditoría)
+
+No forman parte del catálogo original, pero los adaptadores los necesitan
+(igual que el proyecto del banco, donde login y auditoría viven en el dominio).
+
+| # | Servicio (código) | Permiso | Reglas principales |
+|---|---|---|---|
+| 52 | `user.LoginService` | pública | Correo y contraseña; el error nunca revela cuál falló; la cuenta debe estar `ACTIVA`; emite el token con la versión vigente. |
+| 53 | `user.LogoutService` | autenticado | Incrementa la versión del token: todos los tokens emitidos dejan de valer. |
+| 54 | `user.ChangeUserPasswordService` | `USER_UPDATE` | Exige la contraseña actual; la nueva debe ser distinta; invalida los tokens anteriores. |
+| 55 | `user.LoadAuthenticatedUserService` | — | En cada petición: firma válida, versión del token vigente y cuenta `ACTIVA`. |
+| 56 | `audit.RecordAuditService` | — | Registra usuario, operación (`Permission`), entidad, detalle y fecha. |
+| 57 | `audit.ConsultAuditLogService` | `AUDIT_CONSULT` | Administrador y supervisor; por usuario o por entidad. |
+
+Las contraseñas se manejan como `RawPassword` (mínimo 8 caracteres, una letra y un
+dígito; nunca se imprime) y se guardan solo como hash en `UserCredentials`, separadas
+de `User`. El registro de usuarios, compradores y vendedores recibe la contraseña.
+
+### 14.4 Matriz de permisos por rol
 
 El propietario del recurso se valida aparte (`ValidateResourceAccessService`):
 por ejemplo, un comprador solo accede a sus pedidos.
@@ -297,3 +315,4 @@ por ejemplo, un comprador solo accede a sus pedidos.
 | `REFUND_APPROVE` |  |  | ✔ |  |  |
 | `REFUND_REJECT` |  |  | ✔ |  |  |
 | `REPORT_CONSULT` |  |  | ✔ |  | ✔ |
+| `AUDIT_CONSULT` |  |  | ✔ |  | ✔ |

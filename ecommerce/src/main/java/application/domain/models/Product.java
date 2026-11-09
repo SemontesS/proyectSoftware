@@ -104,4 +104,12 @@ public class Product {
         if (productName == null || productName.isBlank()) throw new IllegalArgumentException("Product name is required.");
         return productName.trim();
     }
+
+    /** Rebuilds a persisted product in any status, including DISCONTINUED. For persistence adapters only. */
+    public static Product restore(Long productId, Long sellerId, String productName, ProductType productType,
+                                  ProductStatus status, Money currentPrice, List<ProductVariant> variants) {
+        Product product = new Product(productId, sellerId, productName, productType, status, currentPrice);
+        product.variants.addAll(variants);
+        return product;
+    }
 }

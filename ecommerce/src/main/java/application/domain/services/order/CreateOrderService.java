@@ -5,6 +5,7 @@ import application.domain.exceptions.EntityNotFoundException;
 import application.domain.models.Buyer;
 import application.domain.models.Cart;
 import application.domain.models.CartItem;
+import application.domain.models.InventoryAllocation;
 import application.domain.models.Order;
 import application.domain.models.OrderLine;
 import application.domain.models.Product;
@@ -16,7 +17,6 @@ import application.domain.ports.out.ProductRepositoryPort;
 import application.domain.ports.out.UserRepositoryPort;
 import application.domain.services.authorization.ValidateUserPermissionsService;
 import application.domain.services.inventory.ReserveInventoryService;
-import application.domain.services.inventory.ReserveInventoryService.Allocation;
 import application.domain.valueobjects.BuyerStatus;
 import application.domain.valueobjects.Permission;
 import application.domain.valueobjects.SellerStatus;
@@ -57,7 +57,7 @@ public class CreateOrderService {
 
         // 1. Validate and plan (no side effects)
         Order order = new Order(orderRepositoryPort.nextId(), buyer.getUserId(), null, cart.getCurrency());
-        List<Allocation> allAllocations = new ArrayList<>();
+        List<InventoryAllocation> allAllocations = new ArrayList<>();
         for (CartItem item : cart.getItems()) {
             Product product = productRepositoryPort.findById(item.getProductId())
                     .orElseThrow(() -> new EntityNotFoundException("Product", item.getProductId()));
@@ -71,9 +71,9 @@ public class CreateOrderService {
             }
 
             if (product.requiresInventoryAndShipping()) {
-                List<Allocation> allocations = reserveInventoryService.plan(
+                List<InventoryAllocation> allocations = reserveInventoryService.plan(
                         item.getProductId(), item.getSku(), item.getQuantity());
-                for (Allocation allocation : allocations) {
+                for (InventoryAllocation allocation : allocations) {
                     order.addLine(new OrderLine(item.getProductId(), item.getSku(), product.getSellerId(),
                             allocation.warehouseId(), allocation.quantity(), item.getUnitPrice()));
                 }

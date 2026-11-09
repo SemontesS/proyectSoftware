@@ -3,6 +3,10 @@ package application.domain.services.user;
 import application.domain.exceptions.DuplicateEntityException;
 import application.domain.models.InternalUser;
 import application.domain.models.User;
+import application.domain.models.UserCredentials;
+import application.domain.ports.out.CredentialsRepositoryPort;
+import application.domain.ports.out.PasswordServicePort;
+import application.domain.valueobjects.RawPassword;
 import application.domain.ports.out.UserRepositoryPort;
 import application.domain.services.authorization.ValidateUserPermissionsService;
 import application.domain.valueobjects.Email;
@@ -18,10 +22,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RegisterUserService {
     private final UserRepositoryPort userRepositoryPort;
+    private final CredentialsRepositoryPort credentialsRepositoryPort;
+    private final PasswordServicePort passwordServicePort;
     private final ValidateUserPermissionsService permissions;
 
     public InternalUser register(User requestingUser, String name, Email email,
-                                 IdentityDocument identityDocument, UserRole role) {
+                                 IdentityDocument identityDocument, UserRole role, RawPassword password) {
         permissions.validate(requestingUser, Permission.USER_REGISTER);
         if (userRepositoryPort.existsByEmail(email)) {
             throw new DuplicateEntityException("The email is already registered: " + email.value());
@@ -31,6 +37,8 @@ public class RegisterUserService {
         }
         InternalUser user = new InternalUser(userRepositoryPort.nextId(), name, email,
                 identityDocument, role, UserStatus.ACTIVE);
-        return userRepositoryPort.save(user);
+        InternalUser saved = userRepositoryPort.save(user);
+        credentialsRepositoryPort.save(UserCredentials.create(saved.getUserId(), passwordServicePort.encrypt(password)));
+        return saved;
     }
 }

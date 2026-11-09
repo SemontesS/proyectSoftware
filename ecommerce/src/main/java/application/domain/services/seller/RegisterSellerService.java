@@ -2,7 +2,12 @@ package application.domain.services.seller;
 
 import application.domain.exceptions.DuplicateEntityException;
 import application.domain.models.Seller;
+import application.domain.models.SellerRegistration;
 import application.domain.models.User;
+import application.domain.models.UserCredentials;
+import application.domain.ports.out.CredentialsRepositoryPort;
+import application.domain.ports.out.PasswordServicePort;
+import application.domain.valueobjects.RawPassword;
 import application.domain.models.Warehouse;
 import application.domain.ports.out.UserRepositoryPort;
 import application.domain.ports.out.WarehouseRepositoryPort;
@@ -24,13 +29,13 @@ import org.springframework.stereotype.Service;
 public class RegisterSellerService {
     private final UserRepositoryPort userRepositoryPort;
     private final WarehouseRepositoryPort warehouseRepositoryPort;
+    private final CredentialsRepositoryPort credentialsRepositoryPort;
+    private final PasswordServicePort passwordServicePort;
     private final ValidateUserPermissionsService permissions;
 
-    public record Result(Seller seller, Warehouse firstWarehouse) {
-    }
-
-    public Result register(User requestingUser, String name, Email email,
-                           IdentityDocument identityDocument, Address firstWarehouseLocation) {
+    public SellerRegistration register(User requestingUser, String name, Email email,
+                           IdentityDocument identityDocument, Address firstWarehouseLocation,
+                           RawPassword password) {
         permissions.validate(requestingUser, Permission.SELLER_REGISTER);
         if (userRepositoryPort.existsByEmail(email)) {
             throw new DuplicateEntityException("The email is already registered: " + email.value());
@@ -40,8 +45,9 @@ public class RegisterSellerService {
         }
         Seller seller = userRepositoryPort.save(new Seller(userRepositoryPort.nextId(), name, email,
                 identityDocument, UserStatus.ACTIVE, SellerStatus.ACTIVE));
+        credentialsRepositoryPort.save(UserCredentials.create(seller.getUserId(), passwordServicePort.encrypt(password)));
         Warehouse warehouse = warehouseRepositoryPort.save(new Warehouse(warehouseRepositoryPort.nextId(),
                 seller.getUserId(), firstWarehouseLocation, WarehouseType.SELLER, WarehouseStatus.ACTIVE));
-        return new Result(seller, warehouse);
+        return new SellerRegistration(seller, warehouse);
     }
 }
