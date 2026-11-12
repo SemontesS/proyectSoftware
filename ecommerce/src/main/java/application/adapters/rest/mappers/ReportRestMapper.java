@@ -17,7 +17,7 @@ public final class ReportRestMapper {
     }
 
     public static AuditLogResponseDTO toAuditDTO(AuditLog log) {
-        return new AuditLogResponseDTO(log.auditId(), log.userId(), log.action().name(), log.entityType(),
+        return new AuditLogResponseDTO(log.auditId(), log.userId(), log.action().name(), log.entityType().name(),
                 log.entityId(), log.detail(), log.timestamp());
     }
 

@@ -1,5 +1,6 @@
 package application.domain.services.inventory;
 
+import application.domain.valueobjects.Quantity;
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.exceptions.DuplicateEntityException;
 import application.domain.exceptions.EntityNotFoundException;
@@ -56,8 +57,8 @@ public class RegisterInitialInventoryService {
             throw new DuplicateEntityException("Inventory already exists for this product variant in the warehouse.");
         }
 
-        Inventory inventory = new Inventory(inventoryRepositoryPort.nextId(), productId, sku, warehouseId, 0);
-        if (initialQuantity > 0) inventory.recordInbound(initialQuantity);
+        Inventory inventory = new Inventory(inventoryRepositoryPort.nextId(), productId, sku, warehouseId, Quantity.ZERO);
+        if (initialQuantity > 0) inventory.recordInbound(Quantity.positive(initialQuantity));
         return inventoryRepositoryPort.save(inventory);
     }
 }

@@ -4,6 +4,7 @@ import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.valueobjects.CartStatus;
 import application.domain.valueobjects.Currency;
 import application.domain.valueobjects.Money;
+import application.domain.valueobjects.Quantity;
 import application.domain.valueobjects.Sku;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -43,7 +44,7 @@ public class Cart {
             throw new BusinessRuleViolationException("Cart item currency must match cart currency.");
         }
         findItem(item.getProductId(), item.getSku()).ifPresentOrElse(
-                existing -> existing.changeQuantity(existing.getQuantity() + item.getQuantity()),
+                existing -> existing.changeQuantity(existing.getQuantity().plus(item.getQuantity())),
                 () -> items.add(item));
     }
 
@@ -53,7 +54,7 @@ public class Cart {
                 .findFirst();
     }
 
-    public void updateItemQuantity(Long productId, Sku sku, int quantity) {
+    public void updateItemQuantity(Long productId, Sku sku, Quantity quantity) {
         validateActive();
         CartItem item = findItem(productId, sku)
                 .orElseThrow(() -> new BusinessRuleViolationException("The product variant is not in the cart."));

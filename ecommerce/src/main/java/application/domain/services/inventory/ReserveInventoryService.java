@@ -1,5 +1,6 @@
 package application.domain.services.inventory;
 
+import application.domain.valueobjects.Quantity;
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.models.Inventory;
 import application.domain.models.InventoryAllocation;
@@ -34,31 +35,32 @@ public class ReserveInventoryService {
     /** Reserves stock on behalf of an authorized operator. */
     public List<InventoryAllocation> reserve(User requestingUser, Long productId, Sku sku, int quantity) {
         permissions.validate(requestingUser, Permission.INVENTORY_RESERVE);
-        List<InventoryAllocation> allocations = plan(productId, sku, quantity);
+        List<InventoryAllocation> allocations = plan(productId, sku, Quantity.positive(quantity));
         apply(allocations);
         return allocations;
     }
 
     /** Computes how the quantity would be taken from the active warehouses. Modifies nothing. */
-    public List<InventoryAllocation> plan(Long productId, Sku sku, int quantity) {
-        if (quantity <= 0) throw new IllegalArgumentException("Quantity to reserve must be greater than zero.");
+    public List<InventoryAllocation> plan(Long productId, Sku sku, Quantity quantity) {
+        if (quantity.isZero()) throw new IllegalArgumentException("Quantity to reserve must be greater than zero.");
         List<Inventory> candidates = inventoryRepositoryPort.findByProductAndSku(productId, sku).stream()
-                .filter(inventory -> inventory.getAvailableQuantity() > 0)
+                .filter(inventory -> !inventory.getAvailableQuantity().isZero())
                 .filter(inventory -> warehouseRepositoryPort.findById(inventory.getWarehouseId())
                         .map(warehouse -> warehouse.getStatus() == WarehouseStatus.ACTIVE)
                         .orElse(false))
-                .sorted(Comparator.comparingInt(Inventory::getAvailableQuantity).reversed())
+                .sorted(Comparator.comparing(Inventory::getAvailableQuantity).reversed())
                 .toList();
 
         List<InventoryAllocation> allocations = new ArrayList<>();
-        int remaining = quantity;
+        Quantity remaining = quantity;
         for (Inventory inventory : candidates) {
-            if (remaining == 0) break;
-            int taken = Math.min(remaining, inventory.getAvailableQuantity());
+            if (remaining.isZero()) break;
+            Quantity available = inventory.getAvailableQuantity();
+            Quantity taken = remaining.compareTo(available) < 0 ? remaining : available;
             allocations.add(new InventoryAllocation(inventory, taken));
-            remaining -= taken;
+            remaining = remaining.minus(taken);
         }
-        if (remaining > 0) {
+        if (!remaining.isZero()) {
             throw new BusinessRuleViolationException(
                     "Insufficient inventory for product " + productId + " (" + sku.value() + ").");
         }

@@ -17,7 +17,7 @@ public final class CartRestMapper {
     }
 
     private static CartItemResponseDTO toItemDTO(CartItem item) {
-        return new CartItemResponseDTO(item.getProductId(), item.getSku().value(), item.getQuantity(),
+        return new CartItemResponseDTO(item.getProductId(), item.getSku().value(), item.getQuantity().value(),
                 CommonRestMapper.toDTO(item.getUnitPrice()), CommonRestMapper.toDTO(item.getSubtotal()));
     }
 }

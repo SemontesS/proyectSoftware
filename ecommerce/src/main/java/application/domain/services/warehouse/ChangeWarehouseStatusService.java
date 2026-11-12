@@ -26,7 +26,7 @@ public class ChangeWarehouseStatusService {
                 .orElseThrow(() -> new EntityNotFoundException("Warehouse", warehouseId));
         if (status == WarehouseStatus.INACTIVE
                 && inventoryRepositoryPort.findByWarehouseId(warehouseId).stream()
-                        .anyMatch(inventory -> inventory.getReservedQuantity() > 0)) {
+                        .anyMatch(inventory -> !inventory.getReservedQuantity().isZero())) {
             throw new BusinessRuleViolationException("A warehouse with reserved stock cannot be deactivated.");
         }
         warehouse.changeStatus(status);

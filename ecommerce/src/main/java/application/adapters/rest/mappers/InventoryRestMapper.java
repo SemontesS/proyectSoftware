@@ -16,8 +16,8 @@ public final class InventoryRestMapper {
 
     public static InventoryResponseDTO toDTO(Inventory inventory) {
         return new InventoryResponseDTO(inventory.getInventoryId(), inventory.getProductId(),
-                inventory.getSku().value(), inventory.getWarehouseId(), inventory.getAvailableQuantity(),
-                inventory.getReservedQuantity(), inventory.getDamagedQuantity(),
+                inventory.getSku().value(), inventory.getWarehouseId(), inventory.getAvailableQuantity().value(),
+                inventory.getReservedQuantity().value(), inventory.getDamagedQuantity().value(),
                 inventory.getMovements().stream().map(InventoryRestMapper::toMovementDTO).toList());
     }
 
@@ -27,12 +27,12 @@ public final class InventoryRestMapper {
 
     public static MovementResponseDTO toMovementDTO(InventoryMovement movement) {
         return new MovementResponseDTO(movement.getMovementId(), movement.getType().name(),
-                movement.getQuantity(), movement.getDate());
+                movement.getQuantity().value(), movement.getDate());
     }
 
     public static InventoryAllocationResponseDTO toAllocationDTO(InventoryAllocation allocation) {
         return new InventoryAllocationResponseDTO(allocation.inventory().getInventoryId(),
-                allocation.warehouseId(), allocation.quantity());
+                allocation.warehouseId(), allocation.quantity().value());
     }
 
     public static List<InventoryAllocationResponseDTO> toAllocationDTOs(List<InventoryAllocation> allocations) {

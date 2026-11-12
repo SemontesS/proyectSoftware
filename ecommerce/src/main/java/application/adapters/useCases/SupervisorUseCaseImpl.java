@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AdministrativeReport;
 import application.domain.models.AuditLog;
 import application.domain.models.Buyer;
@@ -62,14 +63,14 @@ public class SupervisorUseCaseImpl implements SupervisorPort {
     @Override
     public User updateUser(User requestingUser, Long userId, String name, Email email) {
         User user = updateUserService.update(requestingUser, userId, name, email);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", user.getUserId(), "User data updated");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, user.getUserId(), "User data updated");
         return user;
     }
 
     @Override
     public void changePassword(User requestingUser, RawPassword currentPassword, RawPassword newPassword) {
         changeUserPasswordService.change(requestingUser, currentPassword, newPassword);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", requestingUser.getUserId(), "Password changed");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, requestingUser.getUserId(), "Password changed");
     }
 
     @Override
@@ -138,7 +139,7 @@ public class SupervisorUseCaseImpl implements SupervisorPort {
     }
 
     @Override
-    public List<AuditLog> consultAuditLogByEntity(User requestingUser, String entityType, Long entityId) {
+    public List<AuditLog> consultAuditLogByEntity(User requestingUser, AuditEntityType entityType, Long entityId) {
         return consultAuditLogService.consultByEntity(requestingUser, entityType, entityId);
     }
 }

@@ -1,5 +1,6 @@
 package application.domain.services.inventory;
 
+import application.domain.valueobjects.Quantity;
 import application.domain.exceptions.EntityNotFoundException;
 import application.domain.models.Inventory;
 import application.domain.models.User;
@@ -23,7 +24,7 @@ public class RegisterSaleDispatchService {
         Inventory inventory = inventoryRepositoryPort.findById(inventoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory", inventoryId));
         resourceAccess.validateInventoryAccess(requestingUser, inventory);
-        inventory.recordSaleOutbound(quantity);
+        inventory.recordSaleOutbound(Quantity.positive(quantity));
         return inventoryRepositoryPort.save(inventory);
     }
 }

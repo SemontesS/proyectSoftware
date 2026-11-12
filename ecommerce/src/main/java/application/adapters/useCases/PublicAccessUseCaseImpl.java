@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AuthenticationResult;
 import application.domain.models.Buyer;
 import application.domain.models.User;
@@ -40,7 +41,7 @@ public class PublicAccessUseCaseImpl implements PublicAccessPort {
     public Buyer registerBuyer(String name, Email email, IdentityDocument identityDocument,
                                Address primaryAddress, RawPassword password) {
         Buyer buyer = registerBuyerService.register(name, email, identityDocument, primaryAddress, password);
-        audit.record(buyer, Permission.USER_REGISTER, "Buyer", buyer.getUserId(), "Self-registration");
+        audit.record(buyer, Permission.USER_REGISTER, AuditEntityType.BUYER, buyer.getUserId(), "Self-registration");
         return buyer;
     }
 }

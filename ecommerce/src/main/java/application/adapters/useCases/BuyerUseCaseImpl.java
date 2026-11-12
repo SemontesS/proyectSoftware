@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.Buyer;
 import application.domain.models.Cart;
 import application.domain.models.Invoice;
@@ -72,14 +73,14 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public User updateUser(User requestingUser, Long userId, String name, Email email) {
         User user = updateUserService.update(requestingUser, userId, name, email);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", user.getUserId(), "User data updated");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, user.getUserId(), "User data updated");
         return user;
     }
 
     @Override
     public void changePassword(User requestingUser, RawPassword currentPassword, RawPassword newPassword) {
         changeUserPasswordService.change(requestingUser, currentPassword, newPassword);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", requestingUser.getUserId(), "Password changed");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, requestingUser.getUserId(), "Password changed");
     }
 
     @Override
@@ -91,7 +92,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     public Buyer updateBuyerInformation(User requestingUser, Long buyerId, Address newPrimaryAddress,
                                         List<Address> addressesToAdd) {
         Buyer buyer = updateBuyerInformationService.update(requestingUser, buyerId, newPrimaryAddress, addressesToAdd);
-        audit.record(requestingUser, Permission.BUYER_UPDATE, "Buyer", buyer.getUserId(), "Addresses updated");
+        audit.record(requestingUser, Permission.BUYER_UPDATE, AuditEntityType.BUYER, buyer.getUserId(), "Addresses updated");
         return buyer;
     }
 
@@ -108,7 +109,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public Cart addProductToCart(User requestingUser, Long productId, Sku sku, int quantity) {
         Cart cart = addProductToCartService.add(requestingUser, productId, sku, quantity);
-        audit.record(requestingUser, Permission.CART_MANAGE, "Cart", cart.getCartId(),
+        audit.record(requestingUser, Permission.CART_MANAGE, AuditEntityType.CART, cart.getCartId(),
                 "Added product " + productId + " x" + quantity);
         return cart;
     }
@@ -116,7 +117,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public Cart updateCartItem(User requestingUser, Long productId, Sku sku, int quantity) {
         Cart cart = updateCartItemService.update(requestingUser, productId, sku, quantity);
-        audit.record(requestingUser, Permission.CART_MANAGE, "Cart", cart.getCartId(),
+        audit.record(requestingUser, Permission.CART_MANAGE, AuditEntityType.CART, cart.getCartId(),
                 "Product " + productId + " quantity set to " + quantity);
         return cart;
     }
@@ -124,7 +125,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public Cart removeProductFromCart(User requestingUser, Long productId) {
         Cart cart = removeProductFromCartService.remove(requestingUser, productId);
-        audit.record(requestingUser, Permission.CART_MANAGE, "Cart", cart.getCartId(), "Removed product " + productId);
+        audit.record(requestingUser, Permission.CART_MANAGE, AuditEntityType.CART, cart.getCartId(), "Removed product " + productId);
         return cart;
     }
 
@@ -136,21 +137,21 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public Order createOrder(User requestingUser) {
         Order order = createOrderService.create(requestingUser);
-        audit.record(requestingUser, Permission.ORDER_CREATE, "Order", order.getOrderId(), "Order created from cart");
+        audit.record(requestingUser, Permission.ORDER_CREATE, AuditEntityType.ORDER, order.getOrderId(), "Order created from cart");
         return order;
     }
 
     @Override
     public Order payOrder(User requestingUser, Long orderId) {
         Order order = validateOrderPaymentService.validate(requestingUser, orderId);
-        audit.record(requestingUser, Permission.ORDER_VALIDATE_PAYMENT, "Order", orderId, "Payment validated");
+        audit.record(requestingUser, Permission.ORDER_VALIDATE_PAYMENT, AuditEntityType.ORDER, orderId, "Payment validated");
         return order;
     }
 
     @Override
     public Order cancelOrder(User requestingUser, Long orderId) {
         Order order = updateOrderStatusService.update(requestingUser, orderId, OrderStatus.CANCELLED);
-        audit.record(requestingUser, Permission.ORDER_UPDATE_STATUS, "Order", orderId, "Order cancelled");
+        audit.record(requestingUser, Permission.ORDER_UPDATE_STATUS, AuditEntityType.ORDER, orderId, "Order cancelled");
         return order;
     }
 
@@ -167,7 +168,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public Invoice generateInvoice(User requestingUser, Long orderId) {
         Invoice invoice = generateInvoiceService.generate(requestingUser, orderId);
-        audit.record(requestingUser, Permission.INVOICE_GENERATE, "Invoice", invoice.getInvoiceId(),
+        audit.record(requestingUser, Permission.INVOICE_GENERATE, AuditEntityType.INVOICE, invoice.getInvoiceId(),
                 "Invoice for order " + orderId);
         return invoice;
     }
@@ -190,7 +191,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     @Override
     public Return requestReturn(User requestingUser, Long orderId, String reason) {
         Return returnRequest = requestReturnService.request(requestingUser, orderId, reason);
-        audit.record(requestingUser, Permission.RETURN_REQUEST, "Return", returnRequest.getReturnId(),
+        audit.record(requestingUser, Permission.RETURN_REQUEST, AuditEntityType.RETURN, returnRequest.getReturnId(),
                 "Return for order " + orderId);
         return returnRequest;
     }

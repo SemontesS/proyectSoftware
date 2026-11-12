@@ -1,5 +1,6 @@
 package application.domain.services.inventory;
 
+import application.domain.valueobjects.Quantity;
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.exceptions.EntityNotFoundException;
 import application.domain.models.Inventory;
@@ -33,7 +34,7 @@ public class RegisterInventoryEntryService {
                 .orElse(false);
         if (!active) throw new BusinessRuleViolationException("Stock cannot enter an inactive warehouse.");
 
-        inventory.recordInbound(quantity);
+        inventory.recordInbound(Quantity.positive(quantity));
         return inventoryRepositoryPort.save(inventory);
     }
 }

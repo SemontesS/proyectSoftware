@@ -30,7 +30,7 @@ public final class OrderRestMapper {
 
     private static OrderLineResponseDTO toLineDTO(OrderLine line) {
         return new OrderLineResponseDTO(line.getProductId(), line.getSku().value(), line.getSellerId(),
-                line.getWarehouseId(), line.getQuantity(), CommonRestMapper.toDTO(line.getUnitPrice()),
+                line.getWarehouseId(), line.getQuantity().value(), CommonRestMapper.toDTO(line.getUnitPrice()),
                 CommonRestMapper.toDTO(line.getSubtotal()));
     }
 

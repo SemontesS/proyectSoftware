@@ -1,5 +1,6 @@
 package application.domain.services.audit;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AuditLog;
 import application.domain.models.User;
 import application.domain.ports.out.AuditLogRepositoryPort;
@@ -17,7 +18,7 @@ public class RecordAuditService {
     private final AuditLogRepositoryPort auditLogRepositoryPort;
     private final Clock clock;
 
-    public AuditLog record(User user, Permission action, String entityType, Long entityId, String detail) {
+    public AuditLog record(User user, Permission action, AuditEntityType entityType, Long entityId, String detail) {
         return auditLogRepositoryPort.save(new AuditLog(null, user.getUserId(), action, entityType,
                 entityId, detail, LocalDateTime.now(clock)));
     }

@@ -1,5 +1,6 @@
 package application.domain.services.audit;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AuditLog;
 import application.domain.models.User;
 import application.domain.ports.out.AuditLogRepositoryPort;
@@ -22,7 +23,7 @@ public class ConsultAuditLogService {
         return auditLogRepositoryPort.findByUserId(userId);
     }
 
-    public List<AuditLog> consultByEntity(User requestingUser, String entityType, Long entityId) {
+    public List<AuditLog> consultByEntity(User requestingUser, AuditEntityType entityType, Long entityId) {
         permissions.validate(requestingUser, Permission.AUDIT_CONSULT);
         return auditLogRepositoryPort.findByEntity(entityType, entityId);
     }

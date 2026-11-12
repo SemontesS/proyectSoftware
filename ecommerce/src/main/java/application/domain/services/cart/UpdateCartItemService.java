@@ -1,5 +1,6 @@
 package application.domain.services.cart;
 
+import application.domain.valueobjects.Quantity;
 import application.domain.exceptions.EntityNotFoundException;
 import application.domain.models.Cart;
 import application.domain.models.User;
@@ -21,7 +22,7 @@ public class UpdateCartItemService {
         permissions.validate(requestingUser, Permission.CART_MANAGE);
         Cart cart = cartRepositoryPort.findActiveByBuyerId(requestingUser.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("Active cart", requestingUser.getUserId()));
-        cart.updateItemQuantity(productId, sku, quantity);
+        cart.updateItemQuantity(productId, sku, Quantity.positive(quantity));
         return cartRepositoryPort.save(cart);
     }
 }

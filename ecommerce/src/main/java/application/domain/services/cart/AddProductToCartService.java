@@ -1,5 +1,6 @@
 package application.domain.services.cart;
 
+import application.domain.valueobjects.Quantity;
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.exceptions.EntityNotFoundException;
 import application.domain.models.Buyer;
@@ -41,7 +42,7 @@ public class AddProductToCartService {
         Cart cart = cartRepositoryPort.findActiveByBuyerId(buyer.getUserId())
                 .orElseGet(() -> new Cart(cartRepositoryPort.nextId(), buyer.getUserId(), null,
                         product.getCurrentPrice().currency()));
-        cart.addItem(new CartItem(productId, sku, quantity, product.getCurrentPrice()));
+        cart.addItem(new CartItem(productId, sku, Quantity.positive(quantity), product.getCurrentPrice()));
         return cartRepositoryPort.save(cart);
     }
 }

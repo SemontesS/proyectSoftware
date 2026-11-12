@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AdministrativeReport;
 import application.domain.models.AuditLog;
 import application.domain.models.Buyer;
@@ -133,7 +134,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     public InternalUser registerInternalUser(User requestingUser, String name, Email email,
                                              IdentityDocument identityDocument, UserRole role, RawPassword password) {
         InternalUser user = registerUserService.register(requestingUser, name, email, identityDocument, role, password);
-        audit.record(requestingUser, Permission.USER_REGISTER, "User", user.getUserId(), "Registered " + role);
+        audit.record(requestingUser, Permission.USER_REGISTER, AuditEntityType.USER, user.getUserId(), "Registered " + role);
         return user;
     }
 
@@ -145,21 +146,21 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public User updateUser(User requestingUser, Long userId, String name, Email email) {
         User user = updateUserService.update(requestingUser, userId, name, email);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", user.getUserId(), "User data updated");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, user.getUserId(), "User data updated");
         return user;
     }
 
     @Override
     public User changeUserStatus(User requestingUser, Long userId, UserStatus status) {
         User user = changeUserStatusService.change(requestingUser, userId, status);
-        audit.record(requestingUser, Permission.USER_CHANGE_STATUS, "User", userId, "Status " + status);
+        audit.record(requestingUser, Permission.USER_CHANGE_STATUS, AuditEntityType.USER, userId, "Status " + status);
         return user;
     }
 
     @Override
     public void changePassword(User requestingUser, RawPassword currentPassword, RawPassword newPassword) {
         changeUserPasswordService.change(requestingUser, currentPassword, newPassword);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", requestingUser.getUserId(), "Password changed");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, requestingUser.getUserId(), "Password changed");
     }
 
     // ---- Buyers ----
@@ -172,14 +173,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     public Buyer updateBuyerInformation(User requestingUser, Long buyerId, Address newPrimaryAddress,
                                         List<Address> addressesToAdd) {
         Buyer buyer = updateBuyerInformationService.update(requestingUser, buyerId, newPrimaryAddress, addressesToAdd);
-        audit.record(requestingUser, Permission.BUYER_UPDATE, "Buyer", buyerId, "Addresses updated");
+        audit.record(requestingUser, Permission.BUYER_UPDATE, AuditEntityType.BUYER, buyerId, "Addresses updated");
         return buyer;
     }
 
     @Override
     public Buyer changeBuyerCommercialStatus(User requestingUser, Long buyerId, BuyerStatus status) {
         Buyer buyer = changeBuyerCommercialStatusService.change(requestingUser, buyerId, status);
-        audit.record(requestingUser, Permission.BUYER_CHANGE_COMMERCIAL_STATUS, "Buyer", buyerId, "Status " + status);
+        audit.record(requestingUser, Permission.BUYER_CHANGE_COMMERCIAL_STATUS, AuditEntityType.BUYER, buyerId, "Status " + status);
         return buyer;
     }
 
@@ -190,7 +191,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
                                              RawPassword password) {
         SellerRegistration registration = registerSellerService.register(requestingUser, name, email,
                 identityDocument, firstWarehouseLocation, password);
-        audit.record(requestingUser, Permission.SELLER_REGISTER, "Seller", registration.seller().getUserId(), name);
+        audit.record(requestingUser, Permission.SELLER_REGISTER, AuditEntityType.SELLER, registration.seller().getUserId(), name);
         return registration;
     }
 
@@ -202,14 +203,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Seller updateSellerInformation(User requestingUser, Long sellerId, String name, Email email) {
         Seller seller = updateSellerInformationService.update(requestingUser, sellerId, name, email);
-        audit.record(requestingUser, Permission.SELLER_UPDATE, "Seller", sellerId, "Seller data updated");
+        audit.record(requestingUser, Permission.SELLER_UPDATE, AuditEntityType.SELLER, sellerId, "Seller data updated");
         return seller;
     }
 
     @Override
     public Seller changeSellerStatus(User requestingUser, Long sellerId, SellerStatus status) {
         Seller seller = changeSellerStatusService.change(requestingUser, sellerId, status);
-        audit.record(requestingUser, Permission.SELLER_CHANGE_STATUS, "Seller", sellerId, "Status " + status);
+        audit.record(requestingUser, Permission.SELLER_CHANGE_STATUS, AuditEntityType.SELLER, sellerId, "Status " + status);
         return seller;
     }
 
@@ -217,7 +218,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Warehouse registerWarehouse(User requestingUser, WarehouseType type, Long sellerId, Address location) {
         Warehouse warehouse = registerWarehouseService.register(requestingUser, type, sellerId, location);
-        audit.record(requestingUser, Permission.WAREHOUSE_REGISTER, "Warehouse", warehouse.getWarehouseId(), "Type " + type);
+        audit.record(requestingUser, Permission.WAREHOUSE_REGISTER, AuditEntityType.WAREHOUSE, warehouse.getWarehouseId(), "Type " + type);
         return warehouse;
     }
 
@@ -229,14 +230,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Warehouse updateWarehouse(User requestingUser, Long warehouseId, Address location) {
         Warehouse warehouse = updateWarehouseService.update(requestingUser, warehouseId, location);
-        audit.record(requestingUser, Permission.WAREHOUSE_UPDATE, "Warehouse", warehouseId, "Location updated");
+        audit.record(requestingUser, Permission.WAREHOUSE_UPDATE, AuditEntityType.WAREHOUSE, warehouseId, "Location updated");
         return warehouse;
     }
 
     @Override
     public Warehouse changeWarehouseStatus(User requestingUser, Long warehouseId, WarehouseStatus status) {
         Warehouse warehouse = changeWarehouseStatusService.change(requestingUser, warehouseId, status);
-        audit.record(requestingUser, Permission.WAREHOUSE_CHANGE_STATUS, "Warehouse", warehouseId, "Status " + status);
+        audit.record(requestingUser, Permission.WAREHOUSE_CHANGE_STATUS, AuditEntityType.WAREHOUSE, warehouseId, "Status " + status);
         return warehouse;
     }
 
@@ -244,21 +245,21 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Product publishProduct(User requestingUser, Long productId) {
         Product product = publishProductService.publish(requestingUser, productId);
-        audit.record(requestingUser, Permission.PRODUCT_PUBLISH, "Product", productId, "Product published");
+        audit.record(requestingUser, Permission.PRODUCT_PUBLISH, AuditEntityType.PRODUCT, productId, "Product published");
         return product;
     }
 
     @Override
     public Product suspendProduct(User requestingUser, Long productId) {
         Product product = suspendProductService.suspend(requestingUser, productId);
-        audit.record(requestingUser, Permission.PRODUCT_SUSPEND, "Product", productId, "Product suspended");
+        audit.record(requestingUser, Permission.PRODUCT_SUSPEND, AuditEntityType.PRODUCT, productId, "Product suspended");
         return product;
     }
 
     @Override
     public Product discontinueProduct(User requestingUser, Long productId) {
         Product product = discontinueProductService.discontinue(requestingUser, productId);
-        audit.record(requestingUser, Permission.PRODUCT_DISCONTINUE, "Product", productId, "Product discontinued");
+        audit.record(requestingUser, Permission.PRODUCT_DISCONTINUE, AuditEntityType.PRODUCT, productId, "Product discontinued");
         return product;
     }
 
@@ -278,7 +279,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
                                               int initialQuantity) {
         Inventory inventory = registerInitialInventoryService.register(requestingUser, productId, sku,
                 warehouseId, initialQuantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_INITIAL, "Inventory",
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_INITIAL, AuditEntityType.INVENTORY,
                 inventory.getInventoryId(), "Initial stock " + initialQuantity);
         return inventory;
     }
@@ -286,14 +287,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Inventory registerInventoryEntry(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerInventoryEntryService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_ENTRY, "Inventory", inventoryId, "Entry " + quantity);
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_ENTRY, AuditEntityType.INVENTORY, inventoryId, "Entry " + quantity);
         return inventory;
     }
 
     @Override
     public List<InventoryAllocation> reserveInventory(User requestingUser, Long productId, Sku sku, int quantity) {
         List<InventoryAllocation> allocations = reserveInventoryService.reserve(requestingUser, productId, sku, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_RESERVE, "Product", productId,
+        audit.record(requestingUser, Permission.INVENTORY_RESERVE, AuditEntityType.PRODUCT, productId,
                 "Reserved " + quantity + " of " + sku.value());
         return allocations;
     }
@@ -301,7 +302,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Inventory registerSaleDispatch(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerSaleDispatchService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_SALE_DISPATCH, "Inventory", inventoryId,
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_SALE_DISPATCH, AuditEntityType.INVENTORY, inventoryId,
                 "Sale dispatch " + quantity);
         return inventory;
     }
@@ -309,14 +310,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Inventory adjustInventory(User requestingUser, Long inventoryId, int delta) {
         Inventory inventory = adjustInventoryService.adjust(requestingUser, inventoryId, delta);
-        audit.record(requestingUser, Permission.INVENTORY_ADJUST, "Inventory", inventoryId, "Adjustment " + delta);
+        audit.record(requestingUser, Permission.INVENTORY_ADJUST, AuditEntityType.INVENTORY, inventoryId, "Adjustment " + delta);
         return inventory;
     }
 
     @Override
     public Inventory registerInventoryReturn(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerInventoryReturnService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_RETURN, "Inventory", inventoryId,
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_RETURN, AuditEntityType.INVENTORY, inventoryId,
                 "Return to stock " + quantity);
         return inventory;
     }
@@ -330,14 +331,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Order payOrder(User requestingUser, Long orderId) {
         Order order = validateOrderPaymentService.validate(requestingUser, orderId);
-        audit.record(requestingUser, Permission.ORDER_VALIDATE_PAYMENT, "Order", orderId, "Payment validated");
+        audit.record(requestingUser, Permission.ORDER_VALIDATE_PAYMENT, AuditEntityType.ORDER, orderId, "Payment validated");
         return order;
     }
 
     @Override
     public Order updateOrderStatus(User requestingUser, Long orderId, OrderStatus target) {
         Order order = updateOrderStatusService.update(requestingUser, orderId, target);
-        audit.record(requestingUser, Permission.ORDER_UPDATE_STATUS, "Order", orderId, "Status " + target);
+        audit.record(requestingUser, Permission.ORDER_UPDATE_STATUS, AuditEntityType.ORDER, orderId, "Status " + target);
         return order;
     }
 
@@ -354,7 +355,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Invoice generateInvoice(User requestingUser, Long orderId) {
         Invoice invoice = generateInvoiceService.generate(requestingUser, orderId);
-        audit.record(requestingUser, Permission.INVOICE_GENERATE, "Invoice", invoice.getInvoiceId(),
+        audit.record(requestingUser, Permission.INVOICE_GENERATE, AuditEntityType.INVOICE, invoice.getInvoiceId(),
                 "Invoice for order " + orderId);
         return invoice;
     }
@@ -367,7 +368,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public List<Shipment> prepareShipment(User requestingUser, Long orderId) {
         List<Shipment> shipments = prepareShipmentService.prepare(requestingUser, orderId);
-        audit.record(requestingUser, Permission.SHIPMENT_PREPARE, "Order", orderId,
+        audit.record(requestingUser, Permission.SHIPMENT_PREPARE, AuditEntityType.ORDER, orderId,
                 shipments.size() + " shipment(s) prepared");
         return shipments;
     }
@@ -375,14 +376,14 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Shipment dispatchShipment(User requestingUser, Long shipmentId) {
         Shipment shipment = dispatchShipmentService.dispatch(requestingUser, shipmentId);
-        audit.record(requestingUser, Permission.SHIPMENT_DISPATCH, "Shipment", shipmentId, "Shipment dispatched");
+        audit.record(requestingUser, Permission.SHIPMENT_DISPATCH, AuditEntityType.SHIPMENT, shipmentId, "Shipment dispatched");
         return shipment;
     }
 
     @Override
     public Shipment confirmDelivery(User requestingUser, Long shipmentId) {
         Shipment shipment = confirmDeliveryService.confirm(requestingUser, shipmentId);
-        audit.record(requestingUser, Permission.SHIPMENT_CONFIRM_DELIVERY, "Shipment", shipmentId, "Delivery confirmed");
+        audit.record(requestingUser, Permission.SHIPMENT_CONFIRM_DELIVERY, AuditEntityType.SHIPMENT, shipmentId, "Delivery confirmed");
         return shipment;
     }
 
@@ -400,28 +401,28 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Return receiveReturn(User requestingUser, Long returnId) {
         Return returnRequest = receiveReturnService.receive(requestingUser, returnId);
-        audit.record(requestingUser, Permission.RETURN_RECEIVE, "Return", returnId, "Return received");
+        audit.record(requestingUser, Permission.RETURN_RECEIVE, AuditEntityType.RETURN, returnId, "Return received");
         return returnRequest;
     }
 
     @Override
     public Refund generateRefund(User requestingUser, Long returnId, Money amount) {
         Refund refund = generateRefundService.generate(requestingUser, returnId, amount);
-        audit.record(requestingUser, Permission.REFUND_GENERATE, "Return", returnId, "Refund " + amount.amount());
+        audit.record(requestingUser, Permission.REFUND_GENERATE, AuditEntityType.RETURN, returnId, "Refund " + amount.amount());
         return refund;
     }
 
     @Override
     public Refund approveRefund(User requestingUser, Long returnId) {
         Refund refund = approveRefundService.approve(requestingUser, returnId);
-        audit.record(requestingUser, Permission.REFUND_APPROVE, "Return", returnId, "Refund approved");
+        audit.record(requestingUser, Permission.REFUND_APPROVE, AuditEntityType.RETURN, returnId, "Refund approved");
         return refund;
     }
 
     @Override
     public Refund rejectRefund(User requestingUser, Long returnId) {
         Refund refund = rejectRefundService.reject(requestingUser, returnId);
-        audit.record(requestingUser, Permission.REFUND_REJECT, "Return", returnId, "Refund rejected");
+        audit.record(requestingUser, Permission.REFUND_REJECT, AuditEntityType.RETURN, returnId, "Refund rejected");
         return refund;
     }
 
@@ -437,7 +438,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     }
 
     @Override
-    public List<AuditLog> consultAuditLogByEntity(User requestingUser, String entityType, Long entityId) {
+    public List<AuditLog> consultAuditLogByEntity(User requestingUser, AuditEntityType entityType, Long entityId) {
         return consultAuditLogService.consultByEntity(requestingUser, entityType, entityId);
     }
 }

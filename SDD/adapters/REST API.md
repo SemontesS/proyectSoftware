@@ -143,6 +143,8 @@ incorrecta, para no revelar la política de contraseñas.
 | GET | `/api/v1/supervisor/audit/users/{userId}` | — | `Lista de AuditLogResponseDTO` | 200 |
 | GET | `/api/v1/supervisor/audit/entities/{entityType}/{entityId}` | — | `Lista de AuditLogResponseDTO` | 200 |
 
+> `{entityType}` acepta los valores del enum `AuditEntityType` (`BUYER`, `CART`, `INVENTORY`, `INVOICE`, `ORDER`, `PRODUCT`, `RETURN`, `SELLER`, `SHIPMENT`, `USER`, `WAREHOUSE`); cualquier otro valor responde 400.
+
 ## Administrador – `/api/v1/admin` (ADMINISTRATOR) – 46 endpoints
 
 | Método | Ruta | Cuerpo | Respuesta | HTTP |

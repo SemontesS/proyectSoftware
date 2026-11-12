@@ -15,11 +15,11 @@ public final class InventoryJpaMapper {
     public static Inventory toDomain(InventoryJpaEntity entity) {
         List<InventoryMovement> movements = entity.getMovements().stream()
                 .map(m -> new InventoryMovement(m.getId(), InventoryMovementType.valueOf(m.getType()),
-                        m.getQuantity(), m.getOccurredAt()))
+                        new Quantity(m.getQuantity()), m.getOccurredAt()))
                 .toList();
         return Inventory.restore(entity.getId(), entity.getProductId(), new Sku(entity.getSku()),
-                entity.getWarehouseId(), entity.getAvailableQuantity(), entity.getReservedQuantity(),
-                entity.getDamagedQuantity(), movements);
+                entity.getWarehouseId(), new Quantity(entity.getAvailableQuantity()),
+                new Quantity(entity.getReservedQuantity()), new Quantity(entity.getDamagedQuantity()), movements);
     }
 
     /**
@@ -31,9 +31,9 @@ public final class InventoryJpaMapper {
         entity.setProductId(inventory.getProductId());
         entity.setSku(inventory.getSku().value());
         entity.setWarehouseId(inventory.getWarehouseId());
-        entity.setAvailableQuantity(inventory.getAvailableQuantity());
-        entity.setReservedQuantity(inventory.getReservedQuantity());
-        entity.setDamagedQuantity(inventory.getDamagedQuantity());
+        entity.setAvailableQuantity(inventory.getAvailableQuantity().value());
+        entity.setReservedQuantity(inventory.getReservedQuantity().value());
+        entity.setDamagedQuantity(inventory.getDamagedQuantity().value());
 
         List<InventoryMovement> movements = inventory.getMovements();
         for (int i = entity.getMovements().size(); i < movements.size(); i++) {
@@ -41,7 +41,7 @@ public final class InventoryJpaMapper {
             InventoryMovementJpaEntity row = new InventoryMovementJpaEntity();
             row.setInventory(entity);
             row.setType(movement.getType().name());
-            row.setQuantity(movement.getQuantity());
+            row.setQuantity(movement.getQuantity().value());
             row.setOccurredAt(movement.getDate());
             entity.getMovements().add(row);
         }

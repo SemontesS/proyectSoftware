@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.Inventory;
 import application.domain.models.Order;
 import application.domain.models.Product;
@@ -67,14 +68,14 @@ public class SellerUseCaseImpl implements SellerPort {
     @Override
     public User updateUser(User requestingUser, Long userId, String name, Email email) {
         User user = updateUserService.update(requestingUser, userId, name, email);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", user.getUserId(), "User data updated");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, user.getUserId(), "User data updated");
         return user;
     }
 
     @Override
     public void changePassword(User requestingUser, RawPassword currentPassword, RawPassword newPassword) {
         changeUserPasswordService.change(requestingUser, currentPassword, newPassword);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", requestingUser.getUserId(), "Password changed");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, requestingUser.getUserId(), "Password changed");
     }
 
     @Override
@@ -91,35 +92,35 @@ public class SellerUseCaseImpl implements SellerPort {
     public Product registerProduct(User requestingUser, String name, ProductType type, Money price,
                                    List<ProductVariant> variants) {
         Product product = registerProductService.register(requestingUser, name, type, price, variants);
-        audit.record(requestingUser, Permission.PRODUCT_REGISTER, "Product", product.getProductId(), name);
+        audit.record(requestingUser, Permission.PRODUCT_REGISTER, AuditEntityType.PRODUCT, product.getProductId(), name);
         return product;
     }
 
     @Override
     public Product updateProduct(User requestingUser, Long productId, String name, Money price) {
         Product product = updateProductService.update(requestingUser, productId, name, price);
-        audit.record(requestingUser, Permission.PRODUCT_UPDATE, "Product", productId, "Product updated");
+        audit.record(requestingUser, Permission.PRODUCT_UPDATE, AuditEntityType.PRODUCT, productId, "Product updated");
         return product;
     }
 
     @Override
     public Product publishProduct(User requestingUser, Long productId) {
         Product product = publishProductService.publish(requestingUser, productId);
-        audit.record(requestingUser, Permission.PRODUCT_PUBLISH, "Product", productId, "Product published");
+        audit.record(requestingUser, Permission.PRODUCT_PUBLISH, AuditEntityType.PRODUCT, productId, "Product published");
         return product;
     }
 
     @Override
     public Product suspendProduct(User requestingUser, Long productId) {
         Product product = suspendProductService.suspend(requestingUser, productId);
-        audit.record(requestingUser, Permission.PRODUCT_SUSPEND, "Product", productId, "Product suspended");
+        audit.record(requestingUser, Permission.PRODUCT_SUSPEND, AuditEntityType.PRODUCT, productId, "Product suspended");
         return product;
     }
 
     @Override
     public Product discontinueProduct(User requestingUser, Long productId) {
         Product product = discontinueProductService.discontinue(requestingUser, productId);
-        audit.record(requestingUser, Permission.PRODUCT_DISCONTINUE, "Product", productId, "Product discontinued");
+        audit.record(requestingUser, Permission.PRODUCT_DISCONTINUE, AuditEntityType.PRODUCT, productId, "Product discontinued");
         return product;
     }
 
@@ -138,7 +139,7 @@ public class SellerUseCaseImpl implements SellerPort {
                                               int initialQuantity) {
         Inventory inventory = registerInitialInventoryService.register(requestingUser, productId, sku,
                 warehouseId, initialQuantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_INITIAL, "Inventory",
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_INITIAL, AuditEntityType.INVENTORY,
                 inventory.getInventoryId(), "Initial stock " + initialQuantity);
         return inventory;
     }
@@ -146,14 +147,14 @@ public class SellerUseCaseImpl implements SellerPort {
     @Override
     public Inventory registerInventoryEntry(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerInventoryEntryService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_ENTRY, "Inventory", inventoryId, "Entry " + quantity);
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_ENTRY, AuditEntityType.INVENTORY, inventoryId, "Entry " + quantity);
         return inventory;
     }
 
     @Override
     public Inventory adjustInventory(User requestingUser, Long inventoryId, int delta) {
         Inventory inventory = adjustInventoryService.adjust(requestingUser, inventoryId, delta);
-        audit.record(requestingUser, Permission.INVENTORY_ADJUST, "Inventory", inventoryId, "Adjustment " + delta);
+        audit.record(requestingUser, Permission.INVENTORY_ADJUST, AuditEntityType.INVENTORY, inventoryId, "Adjustment " + delta);
         return inventory;
     }
 

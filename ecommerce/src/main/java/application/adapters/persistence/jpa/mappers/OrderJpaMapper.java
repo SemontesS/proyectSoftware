@@ -15,7 +15,7 @@ public final class OrderJpaMapper {
     public static Order toDomain(OrderJpaEntity entity) {
         List<OrderLine> lines = entity.getLines().stream()
                 .map(l -> new OrderLine(l.getProductId(), new Sku(l.getSku()), l.getSellerId(), l.getWarehouseId(),
-                        l.getQuantity(), JpaCommonMapper.toMoney(l.getUnitAmount(), l.getUnitCurrency())))
+                        new Quantity(l.getQuantity()), JpaCommonMapper.toMoney(l.getUnitAmount(), l.getUnitCurrency())))
                 .toList();
         return Order.restore(entity.getId(), entity.getBuyerId(), entity.getCreatedAt(),
                 OrderStatus.valueOf(entity.getStatus()), Currency.valueOf(entity.getCurrency()), lines);
@@ -29,7 +29,7 @@ public final class OrderJpaMapper {
         entity.setCurrency(order.getCurrency().name());
         entity.getLines().clear();
         order.getLines().forEach(l -> entity.getLines().add(new OrderLineEmbeddable(l.getProductId(),
-                l.getSku().value(), l.getSellerId(), l.getWarehouseId(), l.getQuantity(),
+                l.getSku().value(), l.getSellerId(), l.getWarehouseId(), l.getQuantity().value(),
                 l.getUnitPrice().amount(), l.getUnitPrice().currency().name())));
     }
 }

@@ -1,5 +1,6 @@
 package application.domain.ports.in;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.*;
 import application.domain.valueobjects.*;
 
@@ -26,5 +27,5 @@ public interface SupervisorPort {
     List<Shipment> consultShipmentsByOrder(User requestingUser, Long orderId);
     AdministrativeReport consultAdministrativeReport(User requestingUser);
     List<AuditLog> consultAuditLogByUser(User requestingUser, Long userId);
-    List<AuditLog> consultAuditLogByEntity(User requestingUser, String entityType, Long entityId);
+    List<AuditLog> consultAuditLogByEntity(User requestingUser, AuditEntityType entityType, Long entityId);
 }

@@ -111,6 +111,13 @@ Lo que se ha comprobado y lo que no, con honestidad:
 - **Pendiente de la primera ejecución real:** Spring, Hibernate con MySQL, MongoDB, JJWT y Spring Security
   no se han ejecutado todavía. Los pasos de `SETUP.md` (sección 3 y 5) son esa validación.
 
+## Pruebas
+
+`ecommerce/src/test/java/application/domain/` contiene pruebas unitarias del dominio (JUnit 5, sin Spring ni
+bases de datos): `Quantity`, `Money`, `Email`, `Sku`, `RawPassword`, `Inventory`, `Cart`, `Order`, `Return`,
+`Product` y `AuditLog`. Se ejecutan con `./mvnw test -Dtest='application.domain.**'`. `EcommerceApplicationTests`
+arranca todo el contexto y necesita MySQL y MongoDB levantados (`docker compose up -d mysql mongo`).
+
 ## Notas
 
 - Los supuestos de negocio que la especificación no define (estado inicial de un producto, reglas de

@@ -1,5 +1,6 @@
 package application.adapters.persistence.mongodb;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AuditLog;
 import application.domain.ports.out.AuditLogRepositoryPort;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class AuditLogRepositoryAdapter implements AuditLogRepositoryPort {
     }
 
     @Override
-    public List<AuditLog> findByEntity(String entityType, Long entityId) {
-        return repository.findByEntityTypeAndEntityIdOrderByTimestampAsc(entityType, entityId).stream()
+    public List<AuditLog> findByEntity(AuditEntityType entityType, Long entityId) {
+        return repository.findByEntityTypeAndEntityIdOrderByTimestampAsc(entityType.name(), entityId).stream()
                 .map(AuditLogMongoMapper::toDomain).toList();
     }
 }

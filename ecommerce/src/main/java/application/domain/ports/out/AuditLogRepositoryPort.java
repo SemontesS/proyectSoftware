@@ -1,5 +1,6 @@
 package application.domain.ports.out;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AuditLog;
 
 import java.util.List;
@@ -9,5 +10,5 @@ public interface AuditLogRepositoryPort {
 
     List<AuditLog> findByUserId(Long userId);
 
-    List<AuditLog> findByEntity(String entityType, Long entityId);
+    List<AuditLog> findByEntity(AuditEntityType entityType, Long entityId);
 }

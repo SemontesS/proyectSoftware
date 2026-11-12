@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.Inventory;
 import application.domain.models.InventoryAllocation;
 import application.domain.models.Order;
@@ -70,14 +71,14 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public User updateUser(User requestingUser, Long userId, String name, Email email) {
         User user = updateUserService.update(requestingUser, userId, name, email);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", user.getUserId(), "User data updated");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, user.getUserId(), "User data updated");
         return user;
     }
 
     @Override
     public void changePassword(User requestingUser, RawPassword currentPassword, RawPassword newPassword) {
         changeUserPasswordService.change(requestingUser, currentPassword, newPassword);
-        audit.record(requestingUser, Permission.USER_UPDATE, "User", requestingUser.getUserId(), "Password changed");
+        audit.record(requestingUser, Permission.USER_UPDATE, AuditEntityType.USER, requestingUser.getUserId(), "Password changed");
     }
 
     @Override
@@ -100,7 +101,7 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
                                               int initialQuantity) {
         Inventory inventory = registerInitialInventoryService.register(requestingUser, productId, sku,
                 warehouseId, initialQuantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_INITIAL, "Inventory",
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_INITIAL, AuditEntityType.INVENTORY,
                 inventory.getInventoryId(), "Initial stock " + initialQuantity);
         return inventory;
     }
@@ -108,14 +109,14 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public Inventory registerInventoryEntry(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerInventoryEntryService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_ENTRY, "Inventory", inventoryId, "Entry " + quantity);
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_ENTRY, AuditEntityType.INVENTORY, inventoryId, "Entry " + quantity);
         return inventory;
     }
 
     @Override
     public List<InventoryAllocation> reserveInventory(User requestingUser, Long productId, Sku sku, int quantity) {
         List<InventoryAllocation> allocations = reserveInventoryService.reserve(requestingUser, productId, sku, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_RESERVE, "Product", productId,
+        audit.record(requestingUser, Permission.INVENTORY_RESERVE, AuditEntityType.PRODUCT, productId,
                 "Reserved " + quantity + " of " + sku.value());
         return allocations;
     }
@@ -123,7 +124,7 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public Inventory registerSaleDispatch(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerSaleDispatchService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_SALE_DISPATCH, "Inventory", inventoryId,
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_SALE_DISPATCH, AuditEntityType.INVENTORY, inventoryId,
                 "Sale dispatch " + quantity);
         return inventory;
     }
@@ -131,14 +132,14 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public Inventory adjustInventory(User requestingUser, Long inventoryId, int delta) {
         Inventory inventory = adjustInventoryService.adjust(requestingUser, inventoryId, delta);
-        audit.record(requestingUser, Permission.INVENTORY_ADJUST, "Inventory", inventoryId, "Adjustment " + delta);
+        audit.record(requestingUser, Permission.INVENTORY_ADJUST, AuditEntityType.INVENTORY, inventoryId, "Adjustment " + delta);
         return inventory;
     }
 
     @Override
     public Inventory registerInventoryReturn(User requestingUser, Long inventoryId, int quantity) {
         Inventory inventory = registerInventoryReturnService.register(requestingUser, inventoryId, quantity);
-        audit.record(requestingUser, Permission.INVENTORY_REGISTER_RETURN, "Inventory", inventoryId,
+        audit.record(requestingUser, Permission.INVENTORY_REGISTER_RETURN, AuditEntityType.INVENTORY, inventoryId,
                 "Return to stock " + quantity);
         return inventory;
     }
@@ -156,7 +157,7 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public List<Shipment> prepareShipment(User requestingUser, Long orderId) {
         List<Shipment> shipments = prepareShipmentService.prepare(requestingUser, orderId);
-        audit.record(requestingUser, Permission.SHIPMENT_PREPARE, "Order", orderId,
+        audit.record(requestingUser, Permission.SHIPMENT_PREPARE, AuditEntityType.ORDER, orderId,
                 shipments.size() + " shipment(s) prepared");
         return shipments;
     }
@@ -164,14 +165,14 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public Shipment dispatchShipment(User requestingUser, Long shipmentId) {
         Shipment shipment = dispatchShipmentService.dispatch(requestingUser, shipmentId);
-        audit.record(requestingUser, Permission.SHIPMENT_DISPATCH, "Shipment", shipmentId, "Shipment dispatched");
+        audit.record(requestingUser, Permission.SHIPMENT_DISPATCH, AuditEntityType.SHIPMENT, shipmentId, "Shipment dispatched");
         return shipment;
     }
 
     @Override
     public Shipment confirmDelivery(User requestingUser, Long shipmentId) {
         Shipment shipment = confirmDeliveryService.confirm(requestingUser, shipmentId);
-        audit.record(requestingUser, Permission.SHIPMENT_CONFIRM_DELIVERY, "Shipment", shipmentId, "Delivery confirmed");
+        audit.record(requestingUser, Permission.SHIPMENT_CONFIRM_DELIVERY, AuditEntityType.SHIPMENT, shipmentId, "Delivery confirmed");
         return shipment;
     }
 
@@ -188,7 +189,7 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     @Override
     public Return receiveReturn(User requestingUser, Long returnId) {
         Return returnRequest = receiveReturnService.receive(requestingUser, returnId);
-        audit.record(requestingUser, Permission.RETURN_RECEIVE, "Return", returnId, "Return received");
+        audit.record(requestingUser, Permission.RETURN_RECEIVE, AuditEntityType.RETURN, returnId, "Return received");
         return returnRequest;
     }
 }

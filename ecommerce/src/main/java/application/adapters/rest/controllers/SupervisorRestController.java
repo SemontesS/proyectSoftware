@@ -1,5 +1,6 @@
 package application.adapters.rest.controllers;
 
+import application.domain.valueobjects.AuditEntityType;
 import application.adapters.rest.dtos.requests.ChangePasswordRequestDTO;
 import application.adapters.rest.dtos.requests.UpdateUserRequestDTO;
 import application.adapters.rest.dtos.responses.AdministrativeReportResponseDTO;
@@ -148,6 +149,7 @@ public class SupervisorRestController {
             @AuthenticationPrincipal(expression = "user") User user,
             @PathVariable String entityType, @PathVariable Long entityId) {
         return ResponseEntity.ok(ReportRestMapper.toAuditDTOs(
-                supervisorPort.consultAuditLogByEntity(user, entityType, entityId)));
+                supervisorPort.consultAuditLogByEntity(user,
+                        AuditEntityType.valueOf(entityType.trim().toUpperCase()), entityId)));
     }
 }

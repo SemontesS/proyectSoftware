@@ -14,7 +14,7 @@ public final class CartJpaMapper {
 
     public static Cart toDomain(CartJpaEntity entity) {
         List<CartItem> items = entity.getItems().stream()
-                .map(i -> new CartItem(i.getProductId(), new Sku(i.getSku()), i.getQuantity(),
+                .map(i -> new CartItem(i.getProductId(), new Sku(i.getSku()), new Quantity(i.getQuantity()),
                         JpaCommonMapper.toMoney(i.getUnitAmount(), i.getUnitCurrency())))
                 .toList();
         return Cart.restore(entity.getId(), entity.getBuyerId(), entity.getCreatedAt(),
@@ -29,6 +29,6 @@ public final class CartJpaMapper {
         entity.setCurrency(cart.getCurrency().name());
         entity.getItems().clear();
         cart.getItems().forEach(i -> entity.getItems().add(new CartItemEmbeddable(i.getProductId(),
-                i.getSku().value(), i.getQuantity(), i.getUnitPrice().amount(), i.getUnitPrice().currency().name())));
+                i.getSku().value(), i.getQuantity().value(), i.getUnitPrice().amount(), i.getUnitPrice().currency().name())));
     }
 }

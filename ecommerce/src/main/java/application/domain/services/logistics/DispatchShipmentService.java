@@ -43,7 +43,7 @@ public class DispatchShipmentService {
             Inventory inventory = inventoryRepositoryPort
                     .findByProductSkuAndWarehouse(line.getProductId(), line.getSku(), line.getWarehouseId())
                     .orElseThrow(() -> new EntityNotFoundException("Inventory", line.getProductId()));
-            registerSaleDispatchService.register(requestingUser, inventory.getInventoryId(), line.getQuantity());
+            registerSaleDispatchService.register(requestingUser, inventory.getInventoryId(), line.getQuantity().value());
         }
         shipmentRepositoryPort.save(shipment);
 

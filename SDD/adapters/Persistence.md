@@ -173,7 +173,7 @@ Colección ordenada en la tabla `buyer_additional_addresses`.
 ## MongoDB
 
 Colección `audit_logs` (`AuditLogDocument`): `id`, `userId`, `action` (un `Permission`),
-`entityType`, `entityId`, `detail`, `timestamp`. Solo se inserta; se consulta por usuario o por entidad.
+`entityType` (nombre del enum `AuditEntityType`), `entityId`, `detail`, `timestamp`. Solo se inserta; se consulta por usuario o por entidad.
 
 ## Puertos y adaptadores
 

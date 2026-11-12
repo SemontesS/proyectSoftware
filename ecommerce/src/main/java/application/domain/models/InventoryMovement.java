@@ -1,6 +1,7 @@
 package application.domain.models;
 
 import application.domain.valueobjects.InventoryMovementType;
+import application.domain.valueobjects.Quantity;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -11,15 +12,16 @@ import java.util.Objects;
 public class InventoryMovement {
     private final Long movementId;
     private final InventoryMovementType type;
-    private final int quantity;
+    private final Quantity quantity;
     private final LocalDateTime date;
 
-    public InventoryMovement(InventoryMovementType type, int quantity, LocalDateTime date) {
+    public InventoryMovement(InventoryMovementType type, Quantity quantity, LocalDateTime date) {
         this(null, type, quantity, date);
     }
 
-    public InventoryMovement(Long movementId, InventoryMovementType type, int quantity, LocalDateTime date) {
-        if (quantity <= 0) throw new IllegalArgumentException("Movement quantity must be greater than zero.");
+    public InventoryMovement(Long movementId, InventoryMovementType type, Quantity quantity, LocalDateTime date) {
+        Objects.requireNonNull(quantity, "Movement quantity is required.");
+        if (quantity.isZero()) throw new IllegalArgumentException("Movement quantity must be greater than zero.");
         this.movementId = movementId;
         this.type = Objects.requireNonNull(type, "Movement type is required.");
         this.quantity = quantity;
