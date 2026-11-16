@@ -123,3 +123,8 @@ arranca todo el contexto y necesita MySQL y MongoDB levantados (`docker compose 
 - Los supuestos de negocio que la especificación no define (estado inicial de un producto, reglas de
   devolución, permisos por rol, impuestos) están listados en `SDD/domain/services/Domain Services.md` §14.2.
 - Al reiniciar con `docker compose down -v` se borran las bases y se vuelven a cargar los datos de demostración.
+
+## Demo de sustentación
+
+Con la app corriendo: `.\scripts\demo-sustentacion.ps1 -Fase Flujo`, reiniciar la app y luego `.\scripts\demo-sustentacion.ps1 -Fase Verificacion`.
+Para una demo limpia: `docker compose down -v` y volver a levantar (la tabla de devoluciones cambió de esquema).

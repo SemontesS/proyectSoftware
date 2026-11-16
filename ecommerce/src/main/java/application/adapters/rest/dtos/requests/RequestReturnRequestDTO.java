@@ -1,15 +1,7 @@
 package application.adapters.rest.dtos.requests;
 
-import application.adapters.rest.dtos.shared.*;
-import application.adapters.rest.dtos.responses.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-public record RequestReturnRequestDTO(@NotBlank String reason) {}
+/** Return of one product (and SKU) of a delivered order. */
+public record RequestReturnRequestDTO(@NotNull Long productId, @NotBlank String sku, @NotBlank String reason) {}

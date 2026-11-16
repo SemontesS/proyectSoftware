@@ -1,5 +1,8 @@
 package application.adapters.useCases;
 
+import application.domain.models.SellerSalesReport;
+import application.domain.services.reporting.ConsultSellerSalesReportService;
+import application.domain.services.returns.ConsultReturnService;
 import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AdministrativeReport;
 import application.domain.models.AuditLog;
@@ -127,6 +130,8 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     private final RejectRefundService rejectRefundService;
     private final ConsultAdministrativeReportsService consultAdministrativeReportsService;
     private final ConsultAuditLogService consultAuditLogService;
+    private final ConsultReturnService consultReturnService;
+    private final ConsultSellerSalesReportService consultSellerSalesReportService;
     private final RecordAuditService audit;
 
     // ---- Users ----
@@ -408,7 +413,7 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public Refund generateRefund(User requestingUser, Long returnId, Money amount) {
         Refund refund = generateRefundService.generate(requestingUser, returnId, amount);
-        audit.record(requestingUser, Permission.REFUND_GENERATE, AuditEntityType.RETURN, returnId, "Refund " + amount.amount());
+        audit.record(requestingUser, Permission.REFUND_GENERATE, AuditEntityType.RETURN, returnId, "Refund " + refund.getAmount().amount() + " " + refund.getAmount().currency());
         return refund;
     }
 
@@ -440,5 +445,15 @@ public class AdministratorUseCaseImpl implements AdministratorPort {
     @Override
     public List<AuditLog> consultAuditLogByEntity(User requestingUser, AuditEntityType entityType, Long entityId) {
         return consultAuditLogService.consultByEntity(requestingUser, entityType, entityId);
+    }
+
+    @Override
+    public List<Return> consultReturns(User requestingUser) {
+        return consultReturnService.consultVisible(requestingUser);
+    }
+
+    @Override
+    public SellerSalesReport consultSellerSalesReport(User requestingUser, Long sellerId) {
+        return consultSellerSalesReportService.consult(requestingUser, sellerId);
     }
 }

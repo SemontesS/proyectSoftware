@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.services.returns.ConsultReturnService;
 import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.Inventory;
 import application.domain.models.InventoryAllocation;
@@ -61,6 +62,7 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
     private final ConfirmDeliveryService confirmDeliveryService;
     private final ConsultShipmentService consultShipmentService;
     private final ReceiveReturnService receiveReturnService;
+    private final ConsultReturnService consultReturnService;
     private final RecordAuditService audit;
 
     @Override
@@ -191,5 +193,10 @@ public class LogisticsOperatorUseCaseImpl implements LogisticsOperatorPort {
         Return returnRequest = receiveReturnService.receive(requestingUser, returnId);
         audit.record(requestingUser, Permission.RETURN_RECEIVE, AuditEntityType.RETURN, returnId, "Return received");
         return returnRequest;
+    }
+
+    @Override
+    public List<Return> consultReturns(User requestingUser) {
+        return consultReturnService.consultVisible(requestingUser);
     }
 }

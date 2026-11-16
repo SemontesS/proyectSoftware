@@ -2,6 +2,8 @@ package application.domain.models;
 
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.valueobjects.Money;
+import application.domain.valueobjects.Quantity;
+import application.domain.valueobjects.Sku;
 import application.domain.valueobjects.RefundStatus;
 import application.domain.valueobjects.ReturnStatus;
 import lombok.AccessLevel;
@@ -13,7 +15,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Return of an order. Lifecycle: REQUESTED -> RECEIVED -> APPROVED | REJECTED, where the last
+ * Return of one line of an order (a product/SKU of a given seller); the other lines are not
+ * affected. Lifecycle: REQUESTED -> RECEIVED -> APPROVED | REJECTED, where the last
  * step is the outcome of the refund decision. A return generates at most one refund.
  */
 @Getter
@@ -22,15 +25,25 @@ public class Return {
     @EqualsAndHashCode.Include
     private final Long returnId;
     private final Long orderId;
+    private final Long productId;
+    private final Sku sku;
+    private final Long sellerId;
+    private final Quantity quantity;
     private final String reason;
     private final LocalDate date;
     private ReturnStatus status;
     @Getter(AccessLevel.NONE)
     private Refund refund;
 
-    public Return(Long returnId, Long orderId, String reason, LocalDate date, ReturnStatus status) {
+    public Return(Long returnId, Long orderId, Long productId, Sku sku, Long sellerId, Quantity quantity,
+                  String reason, LocalDate date, ReturnStatus status) {
         this.returnId = Objects.requireNonNull(returnId, "Return ID is required.");
         this.orderId = Objects.requireNonNull(orderId, "Order ID is required.");
+        this.productId = Objects.requireNonNull(productId, "Product ID is required.");
+        this.sku = Objects.requireNonNull(sku, "SKU is required.");
+        this.sellerId = sellerId;
+        this.quantity = Objects.requireNonNull(quantity, "Returned quantity is required.");
+        if (quantity.isZero()) throw new IllegalArgumentException("Returned quantity must be greater than zero.");
         if (reason == null || reason.isBlank()) throw new IllegalArgumentException("Return reason is required.");
         this.reason = reason.trim();
         this.date = Objects.requireNonNull(date, "Return date is required.");
@@ -78,9 +91,10 @@ public class Return {
     }
 
     /** Rebuilds a persisted return with its optional refund. For persistence adapters only. */
-    public static Return restore(Long returnId, Long orderId, String reason, LocalDate date,
+    public static Return restore(Long returnId, Long orderId, Long productId, Sku sku, Long sellerId,
+                                 Quantity quantity, String reason, LocalDate date,
                                  ReturnStatus status, Refund refund) {
-        Return returnRequest = new Return(returnId, orderId, reason, date, status);
+        Return returnRequest = new Return(returnId, orderId, productId, sku, sellerId, quantity, reason, date, status);
         returnRequest.refund = refund;
         return returnRequest;
     }

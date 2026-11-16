@@ -1,5 +1,8 @@
 package application.adapters.rest.controllers;
 
+import application.adapters.rest.dtos.responses.SellerSalesReportResponseDTO;
+import application.adapters.rest.mappers.ReturnRestMapper;
+import application.adapters.rest.dtos.responses.ReturnResponseDTO;
 import application.domain.valueobjects.AuditEntityType;
 import application.adapters.rest.dtos.requests.ChangePasswordRequestDTO;
 import application.adapters.rest.dtos.requests.UpdateUserRequestDTO;
@@ -151,5 +154,16 @@ public class SupervisorRestController {
         return ResponseEntity.ok(ReportRestMapper.toAuditDTOs(
                 supervisorPort.consultAuditLogByEntity(user,
                         AuditEntityType.valueOf(entityType.trim().toUpperCase()), entityId)));
+    }
+
+    @GetMapping("/returns")
+    public ResponseEntity<List<ReturnResponseDTO>> returns(@AuthenticationPrincipal(expression = "user") User user) {
+        return ResponseEntity.ok(ReturnRestMapper.toReturnDTOs(supervisorPort.consultReturns(user)));
+    }
+
+    @GetMapping("/reports/sellers/{sellerId}")
+    public ResponseEntity<SellerSalesReportResponseDTO> sellerReport(@AuthenticationPrincipal(expression = "user") User user,
+                                                                     @PathVariable Long sellerId) {
+        return ResponseEntity.ok(ReportRestMapper.toSellerReportDTO(supervisorPort.consultSellerSalesReport(user, sellerId)));
     }
 }

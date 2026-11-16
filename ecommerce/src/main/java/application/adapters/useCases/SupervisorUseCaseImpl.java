@@ -1,5 +1,9 @@
 package application.adapters.useCases;
 
+import application.domain.models.SellerSalesReport;
+import application.domain.models.Return;
+import application.domain.services.reporting.ConsultSellerSalesReportService;
+import application.domain.services.returns.ConsultReturnService;
 import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.AdministrativeReport;
 import application.domain.models.AuditLog;
@@ -53,6 +57,8 @@ public class SupervisorUseCaseImpl implements SupervisorPort {
     private final ConsultShipmentService consultShipmentService;
     private final ConsultAdministrativeReportsService consultAdministrativeReportsService;
     private final ConsultAuditLogService consultAuditLogService;
+    private final ConsultReturnService consultReturnService;
+    private final ConsultSellerSalesReportService consultSellerSalesReportService;
     private final RecordAuditService audit;
 
     @Override
@@ -141,5 +147,15 @@ public class SupervisorUseCaseImpl implements SupervisorPort {
     @Override
     public List<AuditLog> consultAuditLogByEntity(User requestingUser, AuditEntityType entityType, Long entityId) {
         return consultAuditLogService.consultByEntity(requestingUser, entityType, entityId);
+    }
+
+    @Override
+    public List<Return> consultReturns(User requestingUser) {
+        return consultReturnService.consultVisible(requestingUser);
+    }
+
+    @Override
+    public SellerSalesReport consultSellerSalesReport(User requestingUser, Long sellerId) {
+        return consultSellerSalesReportService.consult(requestingUser, sellerId);
     }
 }

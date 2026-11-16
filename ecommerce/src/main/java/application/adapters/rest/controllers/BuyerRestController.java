@@ -182,6 +182,11 @@ public class BuyerRestController {
                                                            @PathVariable Long orderId,
                                                            @Valid @RequestBody RequestReturnRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ReturnRestMapper.toReturnDTO(buyerPort.requestReturn(user, orderId, request.reason())));
+                ReturnRestMapper.toReturnDTO(buyerPort.requestReturn(user, orderId, request.productId(), new Sku(request.sku()), request.reason())));
+    }
+
+    @GetMapping("/returns")
+    public ResponseEntity<List<ReturnResponseDTO>> returns(@AuthenticationPrincipal(expression = "user") User user) {
+        return ResponseEntity.ok(ReturnRestMapper.toReturnDTOs(buyerPort.consultMyReturns(user)));
     }
 }

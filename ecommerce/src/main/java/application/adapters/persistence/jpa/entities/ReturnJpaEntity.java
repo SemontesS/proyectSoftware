@@ -7,9 +7,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /** A return and its optional refund (the refund belongs to the Return aggregate). */
 @Entity
@@ -24,6 +21,18 @@ public class ReturnJpaEntity {
     private Long version;
     @Column(name = "order_id", nullable = false)
     private Long orderId;
+    @Column(name = "product_id")
+    private Long productId;
+
+    @Column(name = "sku", length = 64)
+    private String sku;
+
+    @Column(name = "seller_id")
+    private Long sellerId;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
     @Column(name = "reason", nullable = false, length = 500)
     private String reason;
     @Column(name = "return_date", nullable = false)

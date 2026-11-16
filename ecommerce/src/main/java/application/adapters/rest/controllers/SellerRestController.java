@@ -1,5 +1,9 @@
 package application.adapters.rest.controllers;
 
+import application.adapters.rest.mappers.ReportRestMapper;
+import application.adapters.rest.dtos.responses.SellerSalesReportResponseDTO;
+import application.adapters.rest.mappers.ReturnRestMapper;
+import application.adapters.rest.dtos.responses.ReturnResponseDTO;
 import application.adapters.rest.dtos.requests.AdjustmentRequestDTO;
 import application.adapters.rest.dtos.requests.ChangePasswordRequestDTO;
 import application.adapters.rest.dtos.requests.QuantityRequestDTO;
@@ -164,5 +168,15 @@ public class SellerRestController {
     public ResponseEntity<OrderResponseDTO> order(@AuthenticationPrincipal(expression = "user") User user,
                                                   @PathVariable Long orderId) {
         return ResponseEntity.ok(OrderRestMapper.toOrderDTO(sellerPort.consultOrder(user, orderId)));
+    }
+
+    @GetMapping("/returns")
+    public ResponseEntity<List<ReturnResponseDTO>> returns(@AuthenticationPrincipal(expression = "user") User user) {
+        return ResponseEntity.ok(ReturnRestMapper.toReturnDTOs(sellerPort.consultReturns(user)));
+    }
+
+    @GetMapping("/reports/sales")
+    public ResponseEntity<SellerSalesReportResponseDTO> salesReport(@AuthenticationPrincipal(expression = "user") User user) {
+        return ResponseEntity.ok(ReportRestMapper.toSellerReportDTO(sellerPort.consultSalesReport(user)));
     }
 }

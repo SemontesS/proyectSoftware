@@ -1,5 +1,7 @@
 package application.domain.ports.in;
 
+import application.domain.models.User;
+import application.domain.models.Return;
 import application.domain.models.*;
 import application.domain.valueobjects.*;
 
@@ -34,4 +36,6 @@ public interface LogisticsOperatorPort {
 
     // Returns
     Return receiveReturn(User requestingUser, Long returnId);
+
+    List<Return> consultReturns(User requestingUser);
 }

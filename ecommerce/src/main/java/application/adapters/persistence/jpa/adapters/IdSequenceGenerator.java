@@ -1,20 +1,8 @@
 package application.adapters.persistence.jpa.adapters;
 
 import application.adapters.persistence.jpa.entities.*;
-import application.adapters.persistence.jpa.mappers.*;
-import application.adapters.persistence.jpa.repositories.*;
-import application.domain.models.*;
-import application.domain.ports.out.*;
-import application.domain.valueobjects.*;
-import application.domain.valueobjects.Currency;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Issues the identifiers the domain needs before an entity is saved. Each call runs in its own

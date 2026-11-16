@@ -13,5 +13,12 @@ target/
 # Logs
 *.log
 
+# JVM crash dumps
 hs_err_pid*
 replay_pid*
+
+# Editor settings
+.vscode/
+
+# Generado por scripts/demo-sustentacion.ps1
+scripts/estado-demo.json

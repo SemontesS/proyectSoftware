@@ -1,5 +1,6 @@
 package application.adapters.useCases;
 
+import application.domain.services.returns.ConsultReturnService;
 import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.Buyer;
 import application.domain.models.Cart;
@@ -63,6 +64,7 @@ public class BuyerUseCaseImpl implements BuyerPort {
     private final ConsultInvoiceService consultInvoiceService;
     private final ConsultShipmentService consultShipmentService;
     private final RequestReturnService requestReturnService;
+    private final ConsultReturnService consultReturnService;
     private final RecordAuditService audit;
 
     @Override
@@ -189,10 +191,15 @@ public class BuyerUseCaseImpl implements BuyerPort {
     }
 
     @Override
-    public Return requestReturn(User requestingUser, Long orderId, String reason) {
-        Return returnRequest = requestReturnService.request(requestingUser, orderId, reason);
+    public Return requestReturn(User requestingUser, Long orderId, Long productId, Sku sku, String reason) {
+        Return returnRequest = requestReturnService.request(requestingUser, orderId, productId, sku, reason);
         audit.record(requestingUser, Permission.RETURN_REQUEST, AuditEntityType.RETURN, returnRequest.getReturnId(),
-                "Return for order " + orderId);
+                "Return of product " + productId + " (" + sku.value() + ") of order " + orderId + ", seller " + returnRequest.getSellerId());
         return returnRequest;
+    }
+
+    @Override
+    public List<Return> consultMyReturns(User requestingUser) {
+        return consultReturnService.consultVisible(requestingUser);
     }
 }

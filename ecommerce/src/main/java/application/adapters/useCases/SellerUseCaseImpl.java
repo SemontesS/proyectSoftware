@@ -1,5 +1,9 @@
 package application.adapters.useCases;
 
+import application.domain.models.SellerSalesReport;
+import application.domain.models.Return;
+import application.domain.services.reporting.ConsultSellerSalesReportService;
+import application.domain.services.returns.ConsultReturnService;
 import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.Inventory;
 import application.domain.models.Order;
@@ -58,6 +62,8 @@ public class SellerUseCaseImpl implements SellerPort {
     private final AdjustInventoryService adjustInventoryService;
     private final ConsultInventoryService consultInventoryService;
     private final ConsultOrderService consultOrderService;
+    private final ConsultReturnService consultReturnService;
+    private final ConsultSellerSalesReportService consultSellerSalesReportService;
     private final RecordAuditService audit;
 
     @Override
@@ -166,5 +172,15 @@ public class SellerUseCaseImpl implements SellerPort {
     @Override
     public Order consultOrder(User requestingUser, Long orderId) {
         return consultOrderService.consult(requestingUser, orderId);
+    }
+
+    @Override
+    public List<Return> consultReturns(User requestingUser) {
+        return consultReturnService.consultVisible(requestingUser);
+    }
+
+    @Override
+    public SellerSalesReport consultSalesReport(User requestingUser) {
+        return consultSellerSalesReportService.consult(requestingUser, requestingUser.getUserId());
     }
 }

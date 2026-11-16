@@ -1,15 +1,7 @@
 package application.adapters.rest.dtos.requests;
 
-import application.adapters.rest.dtos.shared.*;
-import application.adapters.rest.dtos.responses.*;
+import application.adapters.rest.dtos.shared.MoneyDTO;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-public record GenerateRefundRequestDTO(@NotNull @Valid MoneyDTO amount) {}
+/** The amount is optional: when omitted, the full price of the returned product is refunded. */
+public record GenerateRefundRequestDTO(@Valid MoneyDTO amount) {}

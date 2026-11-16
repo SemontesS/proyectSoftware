@@ -1,0 +1,137 @@
+[
+  {
+    "_id": "b8a39023-869e-413e-aac8-2257fcd92cc6",
+    "name": "NexusMarket",
+    "default": true,
+    "global": false,
+    "sortNum": 10000,
+    "created": "2026-11-13T04:06:00.000Z",
+    "modified": "2026-11-13T04:06:00.000Z",
+    "data": [
+      {
+        "name": "baseUrl",
+        "value": "http://localhost:8080/api/v1"
+      },
+      {
+        "name": "password",
+        "value": "Password123*"
+      },
+      {
+        "name": "sfx",
+        "value": "1"
+      },
+      {
+        "name": "adminToken",
+        "value": ""
+      },
+      {
+        "name": "logiToken",
+        "value": ""
+      },
+      {
+        "name": "supToken",
+        "value": ""
+      },
+      {
+        "name": "buyer1Token",
+        "value": ""
+      },
+      {
+        "name": "buyer2Token",
+        "value": ""
+      },
+      {
+        "name": "buyer3Token",
+        "value": ""
+      },
+      {
+        "name": "seller1Id",
+        "value": ""
+      },
+      {
+        "name": "wh1Id",
+        "value": ""
+      },
+      {
+        "name": "seller1Token",
+        "value": ""
+      },
+      {
+        "name": "phys1Id",
+        "value": ""
+      },
+      {
+        "name": "dig1Id",
+        "value": ""
+      },
+      {
+        "name": "inv1Id",
+        "value": ""
+      },
+      {
+        "name": "seller2Id",
+        "value": ""
+      },
+      {
+        "name": "wh2Id",
+        "value": ""
+      },
+      {
+        "name": "seller2Token",
+        "value": ""
+      },
+      {
+        "name": "phys2Id",
+        "value": ""
+      },
+      {
+        "name": "dig2Id",
+        "value": ""
+      },
+      {
+        "name": "inv2Id",
+        "value": ""
+      },
+      {
+        "name": "seller3Id",
+        "value": ""
+      },
+      {
+        "name": "wh3Id",
+        "value": ""
+      },
+      {
+        "name": "seller3Token",
+        "value": ""
+      },
+      {
+        "name": "phys3Id",
+        "value": ""
+      },
+      {
+        "name": "dig3Id",
+        "value": ""
+      },
+      {
+        "name": "inv3Id",
+        "value": ""
+      },
+      {
+        "name": "orderId",
+        "value": ""
+      },
+      {
+        "name": "ship1Id",
+        "value": ""
+      },
+      {
+        "name": "ship2Id",
+        "value": ""
+      },
+      {
+        "name": "returnId",
+        "value": ""
+      }
+    ]
+  }
+]

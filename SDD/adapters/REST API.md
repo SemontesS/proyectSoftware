@@ -197,3 +197,21 @@ incorrecta, para no revelar la política de contraseñas.
 | GET | `/api/v1/admin/audit/entities/{entityType}/{entityId}` | — | `Lista de AuditLogResponseDTO` | 200 |
 
 **Total: 124 endpoints**, uno por cada operación de los puertos de entrada.
+
+## Cambios para la sustentación
+
+| Método | Ruta | Roles | Descripción |
+|---|---|---|---|
+| POST | `/buyer/cart/items` | Buyer | Valida el stock disponible (productos físicos). Si se supera → 409 |
+| PUT | `/buyer/cart/items/{productId}` | Buyer | Igual: la cantidad nueva debe caber en el stock |
+| POST | `/buyer/orders/{orderId}/returns` | Buyer | Devuelve UN producto: body `{productId, sku, reason}`. El vendedor se toma de la línea del pedido |
+| GET | `/buyer/returns` | Buyer | Devoluciones propias (con reembolso) |
+| GET | `/seller/returns` | Seller | Devoluciones de sus productos |
+| GET | `/seller/reports/sales` | Seller | Reporte propio: ventas, inventario, devoluciones y reembolsos por producto/SKU |
+| GET | `/logistics/returns` | Logistics | Todas las devoluciones |
+| GET | `/supervisor/returns`, `/supervisor/reports/sellers/{sellerId}` | Supervisor | Lectura |
+| GET | `/admin/returns`, `/admin/reports/sellers/{sellerId}` | Admin | Lectura |
+| POST | `/admin/returns/{returnId}/refund` | Admin | Body opcional; sin monto se reembolsa el valor de la línea devuelta (nunca más) |
+
+Reglas: la devolución solo afecta la línea devuelta; al recibirla, si es física, vuelve al inventario de la bodega que la envió (movimiento RETURN). Una línea no puede tener dos devoluciones vigentes.
+El reporte cuenta ventas de pedidos pagados (no pendientes ni cancelados), reembolsos solo si están aprobados, y es 100 % derivado de la base de datos (idéntico tras reiniciar).

@@ -18,6 +18,8 @@ public interface OrderRepositoryPort {
 
     List<Order> findByBuyerId(Long buyerId);
 
+    List<Order> findAll();
+
     Map<OrderStatus, Long> countByStatus();
 
     /** Sum of the totals of paid orders (PAID or later, excluding cancelled), per currency. */

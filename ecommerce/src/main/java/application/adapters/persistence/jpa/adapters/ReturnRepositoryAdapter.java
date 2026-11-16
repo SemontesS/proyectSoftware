@@ -5,15 +5,11 @@ import application.adapters.persistence.jpa.mappers.*;
 import application.adapters.persistence.jpa.repositories.*;
 import application.domain.models.*;
 import application.domain.ports.out.*;
-import application.domain.valueobjects.*;
-import application.domain.valueobjects.Currency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -44,6 +40,11 @@ public class ReturnRepositoryAdapter implements ReturnRepositoryPort {
     @Override
     public Optional<Return> findById(Long returnId) {
         return repository.findById(returnId).map(ReturnJpaMapper::toDomain);
+    }
+
+    @Override
+    public List<Return> findAll() {
+        return repository.findAll(org.springframework.data.domain.Sort.by("id")).stream().map(ReturnJpaMapper::toDomain).toList();
     }
 
     @Override

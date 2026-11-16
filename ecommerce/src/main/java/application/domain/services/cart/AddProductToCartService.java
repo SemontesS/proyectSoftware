@@ -11,6 +11,7 @@ import application.domain.models.User;
 import application.domain.ports.out.CartRepositoryPort;
 import application.domain.ports.out.ProductRepositoryPort;
 import application.domain.ports.out.UserRepositoryPort;
+import application.domain.services.inventory.ReserveInventoryService;
 import application.domain.services.authorization.ValidateUserPermissionsService;
 import application.domain.valueobjects.BuyerStatus;
 import application.domain.valueobjects.Permission;
@@ -25,6 +26,7 @@ public class AddProductToCartService {
     private final CartRepositoryPort cartRepositoryPort;
     private final ProductRepositoryPort productRepositoryPort;
     private final UserRepositoryPort userRepositoryPort;
+    private final ReserveInventoryService reserveInventoryService;
     private final ValidateUserPermissionsService permissions;
 
     public Cart add(User requestingUser, Long productId, Sku sku, int quantity) {
@@ -42,6 +44,14 @@ public class AddProductToCartService {
         Cart cart = cartRepositoryPort.findActiveByBuyerId(buyer.getUserId())
                 .orElseGet(() -> new Cart(cartRepositoryPort.nextId(), buyer.getUserId(), null,
                         product.getCurrentPrice().currency()));
+        if (product.requiresInventoryAndShipping()) {
+            // Total that would be in the cart after adding: it must fit in the available stock.
+            Quantity requested = Quantity.positive(quantity);
+            Quantity wanted = cart.findItem(productId, sku)
+                    .map(existing -> existing.getQuantity().plus(requested))
+                    .orElse(requested);
+            reserveInventoryService.plan(productId, sku, wanted);
+        }
         cart.addItem(new CartItem(productId, sku, Quantity.positive(quantity), product.getCurrentPrice()));
         return cartRepositoryPort.save(cart);
     }

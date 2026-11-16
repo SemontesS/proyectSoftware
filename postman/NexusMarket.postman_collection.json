@@ -1,0 +1,3352 @@
+{
+  "info": {
+    "name": "NexusMarket ",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Login del personal interno",
+      "item": [
+        {
+          "name": "Login administrador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@nexusmarket.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"adminToken\", j.token);",
+                  "pm.environment.set(\"adminToken\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login logistica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"logistica@nexusmarket.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"logiToken\", j.token);",
+                  "pm.environment.set(\"logiToken\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login supervisor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"supervisor@nexusmarket.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"supToken\", j.token);",
+                  "pm.environment.set(\"supToken\", j.token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. Compradores y vendedores con productos",
+      "item": [
+        {
+          "name": "Registrar comprador 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/buyer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "buyer"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Comprador 1\",\n  \"email\": \"comprador1.{{sfx}}@demo.com\",\n  \"identityDocument\": \"BUY-{{sfx}}1\",\n  \"primaryAddress\": {\n    \"type\": \"HOME\",\n    \"detail\": \"Calle 1 # 10-20\",\n    \"city\": \"Medellin\"\n  },\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login comprador 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"comprador1.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"buyer1Token\", j.token);",
+                  "pm.environment.set(\"buyer1Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET perfil comprador 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar comprador 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/buyer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "buyer"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Comprador 2\",\n  \"email\": \"comprador2.{{sfx}}@demo.com\",\n  \"identityDocument\": \"BUY-{{sfx}}2\",\n  \"primaryAddress\": {\n    \"type\": \"HOME\",\n    \"detail\": \"Calle 2 # 10-20\",\n    \"city\": \"Medellin\"\n  },\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login comprador 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"comprador2.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"buyer2Token\", j.token);",
+                  "pm.environment.set(\"buyer2Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET perfil comprador 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar comprador 3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/buyer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "buyer"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Comprador 3\",\n  \"email\": \"comprador3.{{sfx}}@demo.com\",\n  \"identityDocument\": \"BUY-{{sfx}}3\",\n  \"primaryAddress\": {\n    \"type\": \"HOME\",\n    \"detail\": \"Calle 3 # 10-20\",\n    \"city\": \"Medellin\"\n  },\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login comprador 3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"comprador3.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"buyer3Token\", j.token);",
+                  "pm.environment.set(\"buyer3Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET perfil comprador 3",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Registrar vendedor 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/sellers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "sellers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vendedor 1\",\n  \"email\": \"vendedor1.{{sfx}}@demo.com\",\n  \"identityDocument\": \"SEL-{{sfx}}1\",\n  \"warehouseLocation\": {\n    \"type\": \"HOME\",\n    \"detail\": \"Bodega 1\",\n    \"city\": \"Bello\"\n  },\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller1Id\", j.seller.userId);",
+                  "pm.environment.set(\"seller1Id\", j.seller.userId);",
+                  "pm.collectionVariables.set(\"wh1Id\", j.firstWarehouse.warehouseId);",
+                  "pm.environment.set(\"wh1Id\", j.firstWarehouse.warehouseId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login vendedor 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vendedor1.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller1Token\", j.token);",
+                  "pm.environment.set(\"seller1Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V1] Crear producto FISICO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto fisico V1\",\n  \"type\": \"PHYSICAL\",\n  \"price\": {\n    \"amount\": 100000,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"FIS-{{sfx}}-1\",\n      \"attribute\": \"color\",\n      \"value\": \"negro\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"phys1Id\", j.productId);",
+                  "pm.environment.set(\"phys1Id\", j.productId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V1] Crear producto DIGITAL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto digital V1\",\n  \"type\": \"DIGITAL\",\n  \"price\": {\n    \"amount\": 50000,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"DIG-{{sfx}}-1\",\n      \"attribute\": \"licencia\",\n      \"value\": \"anual\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"dig1Id\", j.productId);",
+                  "pm.environment.set(\"dig1Id\", j.productId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V1] Publicar fisico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys1Id}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys1Id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[V1] Publicar digital",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{dig1Id}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{dig1Id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[V1] Inventario inicial (5 unidades)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "inventory"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys1Id}},\n  \"sku\": \"FIS-{{sfx}}-1\",\n  \"warehouseId\": {{wh1Id}},\n  \"initialQuantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"inv1Id\", j.inventoryId);",
+                  "pm.environment.set(\"inv1Id\", j.inventoryId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET productos del vendedor 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario fisico V1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys1Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys1Id}}",
+                "inventory"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Registrar vendedor 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/sellers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "sellers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vendedor 2\",\n  \"email\": \"vendedor2.{{sfx}}@demo.com\",\n  \"identityDocument\": \"SEL-{{sfx}}2\",\n  \"warehouseLocation\": {\n    \"type\": \"HOME\",\n    \"detail\": \"Bodega 2\",\n    \"city\": \"Bello\"\n  },\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller2Id\", j.seller.userId);",
+                  "pm.environment.set(\"seller2Id\", j.seller.userId);",
+                  "pm.collectionVariables.set(\"wh2Id\", j.firstWarehouse.warehouseId);",
+                  "pm.environment.set(\"wh2Id\", j.firstWarehouse.warehouseId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login vendedor 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vendedor2.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller2Token\", j.token);",
+                  "pm.environment.set(\"seller2Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V2] Crear producto FISICO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto fisico V2\",\n  \"type\": \"PHYSICAL\",\n  \"price\": {\n    \"amount\": 200000,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"FIS-{{sfx}}-2\",\n      \"attribute\": \"color\",\n      \"value\": \"negro\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"phys2Id\", j.productId);",
+                  "pm.environment.set(\"phys2Id\", j.productId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V2] Crear producto DIGITAL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto digital V2\",\n  \"type\": \"DIGITAL\",\n  \"price\": {\n    \"amount\": 100000,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"DIG-{{sfx}}-2\",\n      \"attribute\": \"licencia\",\n      \"value\": \"anual\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"dig2Id\", j.productId);",
+                  "pm.environment.set(\"dig2Id\", j.productId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V2] Publicar fisico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys2Id}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys2Id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[V2] Publicar digital",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{dig2Id}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{dig2Id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[V2] Inventario inicial (5 unidades)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "inventory"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys2Id}},\n  \"sku\": \"FIS-{{sfx}}-2\",\n  \"warehouseId\": {{wh2Id}},\n  \"initialQuantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"inv2Id\", j.inventoryId);",
+                  "pm.environment.set(\"inv2Id\", j.inventoryId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET productos del vendedor 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario fisico V2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys2Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys2Id}}",
+                "inventory"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Registrar vendedor 3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/sellers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "sellers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vendedor 3\",\n  \"email\": \"vendedor3.{{sfx}}@demo.com\",\n  \"identityDocument\": \"SEL-{{sfx}}3\",\n  \"warehouseLocation\": {\n    \"type\": \"HOME\",\n    \"detail\": \"Bodega 3\",\n    \"city\": \"Bello\"\n  },\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller3Id\", j.seller.userId);",
+                  "pm.environment.set(\"seller3Id\", j.seller.userId);",
+                  "pm.collectionVariables.set(\"wh3Id\", j.firstWarehouse.warehouseId);",
+                  "pm.environment.set(\"wh3Id\", j.firstWarehouse.warehouseId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login vendedor 3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vendedor3.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller3Token\", j.token);",
+                  "pm.environment.set(\"seller3Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V3] Crear producto FISICO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto fisico V3\",\n  \"type\": \"PHYSICAL\",\n  \"price\": {\n    \"amount\": 300000,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"FIS-{{sfx}}-3\",\n      \"attribute\": \"color\",\n      \"value\": \"negro\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"phys3Id\", j.productId);",
+                  "pm.environment.set(\"phys3Id\", j.productId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V3] Crear producto DIGITAL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto digital V3\",\n  \"type\": \"DIGITAL\",\n  \"price\": {\n    \"amount\": 150000,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"DIG-{{sfx}}-3\",\n      \"attribute\": \"licencia\",\n      \"value\": \"anual\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"dig3Id\", j.productId);",
+                  "pm.environment.set(\"dig3Id\", j.productId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[V3] Publicar fisico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys3Id}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys3Id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[V3] Publicar digital",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{dig3Id}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{dig3Id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[V3] Inventario inicial (5 unidades)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "inventory"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys3Id}},\n  \"sku\": \"FIS-{{sfx}}-3\",\n  \"warehouseId\": {{wh3Id}},\n  \"initialQuantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"inv3Id\", j.inventoryId);",
+                  "pm.environment.set(\"inv3Id\", j.inventoryId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET productos del vendedor 3",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario fisico V3",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys3Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys3Id}}",
+                "inventory"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Carrito del comprador 1",
+      "item": [
+        {
+          "name": "Agregar fisico V1 (x1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys1Id}},\n  \"sku\": \"FIS-{{sfx}}-1\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Agregar fisico V2 (x1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys2Id}},\n  \"sku\": \"FIS-{{sfx}}-2\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Agregar digital V1 (x1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{dig1Id}},\n  \"sku\": \"DIG-{{sfx}}-1\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Agregar digital V2 (x1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{dig2Id}},\n  \"sku\": \"DIG-{{sfx}}-2\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET carrito (4 productos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart"
+              ]
+            }
+          }
+        },
+        {
+          "name": "BLOQUEADO 409: agregar 50 unidades (stock 5)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys1Id}},\n  \"sku\": \"FIS-{{sfx}}-1\",\n  \"quantity\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "BLOQUEADO 409: subir cantidad a 50",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart/items/{{phys1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items",
+                "{{phys1Id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"FIS-{{sfx}}-1\",\n  \"quantity\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET carrito (sin cambios)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Compra, pago y envio",
+      "item": [
+        {
+          "name": "Crear orden",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"orderId\", j.orderId);",
+                  "pm.environment.set(\"orderId\", j.orderId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET orden (PENDING_PAYMENT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pagar orden",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}/payment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}",
+                "payment"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET orden (PAID)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Logistica] Preparar envios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/orders/{{orderId}}/shipments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "orders",
+                "{{orderId}}",
+                "shipments"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"ship1Id\", j[0].shipmentId);",
+                  "pm.environment.set(\"ship1Id\", j[0].shipmentId);",
+                  "pm.collectionVariables.set(\"ship2Id\", j[1].shipmentId);",
+                  "pm.environment.set(\"ship2Id\", j[1].shipmentId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[Logistica] Despachar envio 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/shipments/{{ship1Id}}/dispatch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "shipments",
+                "{{ship1Id}}",
+                "dispatch"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Logistica] Entregar envio 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/shipments/{{ship1Id}}/delivery",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "shipments",
+                "{{ship1Id}}",
+                "delivery"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Logistica] Despachar envio 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/shipments/{{ship2Id}}/dispatch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "shipments",
+                "{{ship2Id}}",
+                "dispatch"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Logistica] Entregar envio 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/shipments/{{ship2Id}}/delivery",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "shipments",
+                "{{ship2Id}}",
+                "delivery"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET envios de la orden",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}/shipments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}",
+                "shipments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET orden (DELIVERED)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario V1 tras la compra (4)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys1Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys1Id}}",
+                "inventory"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario V2 tras la compra (4)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys2Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys2Id}}",
+                "inventory"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET reporte V1 ANTES de la devolucion",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET reporte V2 ANTES de la devolucion",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Devolucion y reembolso (fisico del vendedor 2)",
+      "item": [
+        {
+          "name": "[Comprador 1] Solicitar devolucion del fisico V2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}/returns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}",
+                "returns"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{phys2Id}},\n  \"sku\": \"FIS-{{sfx}}-2\",\n  \"reason\": \"Producto defectuoso\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"returnId\", j.returnId);",
+                  "pm.environment.set(\"returnId\", j.returnId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET devoluciones del comprador (sellerId = V2)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/returns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "returns"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET devoluciones del vendedor 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/returns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "returns"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Logistica] Recibir devolucion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/returns/{{returnId}}/receive",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "returns",
+                "{{returnId}}",
+                "receive"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET devoluciones (logistica)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/returns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "returns"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Generar reembolso (valor de la linea)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/returns/{{returnId}}/refund",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "returns",
+                "{{returnId}}",
+                "refund"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] Aprobar reembolso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/returns/{{returnId}}/refund/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "returns",
+                "{{returnId}}",
+                "refund",
+                "approve"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET devoluciones + reembolso (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/returns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "returns"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET orden: las 4 lineas siguen iguales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET envios sin cambios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}/shipments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}",
+                "shipments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario V2 (+1 unidad devuelta = 5)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys2Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys2Id}}",
+                "inventory"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET inventario V1 (sin cambios = 4)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products/{{phys1Id}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{phys1Id}}",
+                "inventory"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Reportes de vendedores",
+      "item": [
+        {
+          "name": "GET reporte vendedor 1 (guardar captura)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET reporte vendedor 2 (guardar captura)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET reporte vendedor 3 (guardar captura)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Supervisor] GET reporte del vendedor 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/supervisor/reports/sellers/{{seller2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "supervisor",
+                "reports",
+                "sellers",
+                "{{seller2Id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[Admin] GET reporte del vendedor 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/reports/sellers/{{seller2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "reports",
+                "sellers",
+                "{{seller2Id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Seguridad por rol (todo debe bloquearse)",
+      "item": [
+        {
+          "name": "403: comprador crea producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"x\",\n  \"type\": \"PHYSICAL\",\n  \"price\": {\n    \"amount\": 1,\n    \"currency\": \"COP\"\n  },\n  \"variants\": [\n    {\n      \"sku\": \"X-1\",\n      \"attribute\": \"a\",\n      \"value\": \"b\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "403: comprador consulta reporte admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "reports"
+              ]
+            }
+          }
+        },
+        {
+          "name": "403: comprador aprueba reembolso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/returns/{{returnId}}/refund/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "returns",
+                "{{returnId}}",
+                "refund",
+                "approve"
+              ]
+            }
+          }
+        },
+        {
+          "name": "403: comprador 2 lee la orden del comprador 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "403: vendedor usa el carrito",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "cart"
+              ]
+            }
+          }
+        },
+        {
+          "name": "403: vendedor 1 lee reporte del vendedor 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/reports/sellers/{{seller2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "reports",
+                "sellers",
+                "{{seller2Id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "403: vendedor 1 ajusta inventario del vendedor 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/inventory/{{inv2Id}}/adjustments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "inventory",
+                "{{inv2Id}}",
+                "adjustments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delta\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "403: logistica genera reembolso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{logiToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/returns/{{returnId}}/refund",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "returns",
+                "{{returnId}}",
+                "refund"
+              ]
+            }
+          }
+        },
+        {
+          "name": "403: supervisor recibe devolucion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logistics/returns/{{returnId}}/receive",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logistics",
+                "returns",
+                "{{returnId}}",
+                "receive"
+              ]
+            }
+          }
+        },
+        {
+          "name": "401: sin token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/buyer/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buyer",
+                "orders"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Verificacion tras REINICIAR la app",
+      "item": [
+        {
+          "name": "Login vendedor 1 (de nuevo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vendedor1.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller1Token\", j.token);",
+                  "pm.environment.set(\"seller1Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET reporte vendedor 1 tras reinicio (comparar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller1Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login vendedor 2 (de nuevo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vendedor2.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller2Token\", j.token);",
+                  "pm.environment.set(\"seller2Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET reporte vendedor 2 tras reinicio (comparar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller2Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login vendedor 3 (de nuevo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vendedor3.{{sfx}}@demo.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"seller3Token\", j.token);",
+                  "pm.environment.set(\"seller3Token\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET reporte vendedor 3 tras reinicio (comparar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{seller3Token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seller/reports/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "sales"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1"
+    },
+    {
+      "key": "password",
+      "value": "Password123*"
+    },
+    {
+      "key": "sfx",
+      "value": "1"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "logiToken",
+      "value": ""
+    },
+    {
+      "key": "supToken",
+      "value": ""
+    },
+    {
+      "key": "buyer1Token",
+      "value": ""
+    },
+    {
+      "key": "buyer2Token",
+      "value": ""
+    },
+    {
+      "key": "buyer3Token",
+      "value": ""
+    },
+    {
+      "key": "seller1Id",
+      "value": ""
+    },
+    {
+      "key": "wh1Id",
+      "value": ""
+    },
+    {
+      "key": "seller1Token",
+      "value": ""
+    },
+    {
+      "key": "phys1Id",
+      "value": ""
+    },
+    {
+      "key": "dig1Id",
+      "value": ""
+    },
+    {
+      "key": "inv1Id",
+      "value": ""
+    },
+    {
+      "key": "seller2Id",
+      "value": ""
+    },
+    {
+      "key": "wh2Id",
+      "value": ""
+    },
+    {
+      "key": "seller2Token",
+      "value": ""
+    },
+    {
+      "key": "phys2Id",
+      "value": ""
+    },
+    {
+      "key": "dig2Id",
+      "value": ""
+    },
+    {
+      "key": "inv2Id",
+      "value": ""
+    },
+    {
+      "key": "seller3Id",
+      "value": ""
+    },
+    {
+      "key": "wh3Id",
+      "value": ""
+    },
+    {
+      "key": "seller3Token",
+      "value": ""
+    },
+    {
+      "key": "phys3Id",
+      "value": ""
+    },
+    {
+      "key": "dig3Id",
+      "value": ""
+    },
+    {
+      "key": "inv3Id",
+      "value": ""
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "ship1Id",
+      "value": ""
+    },
+    {
+      "key": "ship2Id",
+      "value": ""
+    },
+    {
+      "key": "returnId",
+      "value": ""
+    }
+  ]
+}

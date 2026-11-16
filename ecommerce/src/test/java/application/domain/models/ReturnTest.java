@@ -3,8 +3,10 @@ package application.domain.models;
 import application.domain.exceptions.BusinessRuleViolationException;
 import application.domain.valueobjects.Currency;
 import application.domain.valueobjects.Money;
+import application.domain.valueobjects.Quantity;
 import application.domain.valueobjects.RefundStatus;
 import application.domain.valueobjects.ReturnStatus;
+import application.domain.valueobjects.Sku;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +22,19 @@ class ReturnTest {
 
     @BeforeEach
     void setUp() {
-        returnRequest = new Return(1L, 2L, "Damaged on arrival", LocalDate.now(), ReturnStatus.REQUESTED);
+        returnRequest = newReturn("Damaged on arrival");
+    }
+
+    private static Return newReturn(String reason) {
+        return new Return(1L, 2L, 3L, new Sku("SKU-1"), 4L, Quantity.positive(1), reason,
+                LocalDate.now(), ReturnStatus.REQUESTED);
+    }
+
+    @Test
+    void theReturnKeepsTheProductAndSellerOfTheReturnedLine() {
+        assertEquals(3L, returnRequest.getProductId());
+        assertEquals(4L, returnRequest.getSellerId());
+        assertEquals(1, returnRequest.getQuantity().value());
     }
 
     private Money amount() {
@@ -30,7 +44,7 @@ class ReturnTest {
     @Test
     void aReasonIsRequired() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Return(1L, 2L, " ", LocalDate.now(), ReturnStatus.REQUESTED));
+                () -> newReturn(" "));
     }
 
     @Test

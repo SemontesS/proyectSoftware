@@ -3,9 +3,6 @@ package application.adapters.persistence.jpa.mappers;
 import application.adapters.persistence.jpa.entities.*;
 import application.domain.models.*;
 import application.domain.valueobjects.*;
-import application.domain.valueobjects.Currency;
-
-import java.util.List;
 
 public final class ShipmentJpaMapper {
 

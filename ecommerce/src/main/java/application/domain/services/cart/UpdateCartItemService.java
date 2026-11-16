@@ -5,6 +5,9 @@ import application.domain.exceptions.EntityNotFoundException;
 import application.domain.models.Cart;
 import application.domain.models.User;
 import application.domain.ports.out.CartRepositoryPort;
+import application.domain.models.Product;
+import application.domain.ports.out.ProductRepositoryPort;
+import application.domain.services.inventory.ReserveInventoryService;
 import application.domain.services.authorization.ValidateUserPermissionsService;
 import application.domain.valueobjects.Permission;
 import application.domain.valueobjects.Sku;
@@ -16,13 +19,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UpdateCartItemService {
     private final CartRepositoryPort cartRepositoryPort;
+    private final ProductRepositoryPort productRepositoryPort;
+    private final ReserveInventoryService reserveInventoryService;
     private final ValidateUserPermissionsService permissions;
 
     public Cart update(User requestingUser, Long productId, Sku sku, int quantity) {
         permissions.validate(requestingUser, Permission.CART_MANAGE);
         Cart cart = cartRepositoryPort.findActiveByBuyerId(requestingUser.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("Active cart", requestingUser.getUserId()));
-        cart.updateItemQuantity(productId, sku, Quantity.positive(quantity));
+        Quantity wanted = Quantity.positive(quantity);
+        Product product = productRepositoryPort.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product", productId));
+        if (product.requiresInventoryAndShipping()) {
+            reserveInventoryService.plan(productId, sku, wanted);
+        }
+        cart.updateItemQuantity(productId, sku, wanted);
         return cartRepositoryPort.save(cart);
     }
 }

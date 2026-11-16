@@ -15,4 +15,6 @@ public interface ReturnRepositoryPort {
     Optional<Return> findById(Long returnId);
 
     List<Return> findByOrderId(Long orderId);
+
+    List<Return> findAll();
 }

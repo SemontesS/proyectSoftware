@@ -1,5 +1,6 @@
 package application.adapters.rest.controllers;
 
+import application.adapters.rest.dtos.responses.SellerSalesReportResponseDTO;
 import application.domain.valueobjects.AuditEntityType;
 import application.adapters.rest.dtos.requests.AdjustmentRequestDTO;
 import application.adapters.rest.dtos.requests.ChangePasswordRequestDTO;
@@ -377,9 +378,10 @@ public class AdministratorRestController {
     @PostMapping("/returns/{returnId}/refund")
     public ResponseEntity<RefundResponseDTO> generateRefund(@AuthenticationPrincipal(expression = "user") User user,
                                                             @PathVariable Long returnId,
-                                                            @Valid @RequestBody GenerateRefundRequestDTO request) {
+                                                            @RequestBody(required = false) @Valid GenerateRefundRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ReturnRestMapper.toRefundDTO(
-                administratorPort.generateRefund(user, returnId, CommonRestMapper.toDomain(request.amount()))));
+                administratorPort.generateRefund(user, returnId, request == null || request.amount() == null ? null
+                        : CommonRestMapper.toDomain(request.amount()))));
     }
 
     @PostMapping("/returns/{returnId}/refund/approve")
@@ -413,5 +415,16 @@ public class AdministratorRestController {
         return ResponseEntity.ok(ReportRestMapper.toAuditDTOs(
                 administratorPort.consultAuditLogByEntity(user,
                         AuditEntityType.valueOf(entityType.trim().toUpperCase()), entityId)));
+    }
+
+    @GetMapping("/returns")
+    public ResponseEntity<List<ReturnResponseDTO>> returns(@AuthenticationPrincipal(expression = "user") User user) {
+        return ResponseEntity.ok(ReturnRestMapper.toReturnDTOs(administratorPort.consultReturns(user)));
+    }
+
+    @GetMapping("/reports/sellers/{sellerId}")
+    public ResponseEntity<SellerSalesReportResponseDTO> sellerReport(@AuthenticationPrincipal(expression = "user") User user,
+                                                                     @PathVariable Long sellerId) {
+        return ResponseEntity.ok(ReportRestMapper.toSellerReportDTO(administratorPort.consultSellerSalesReport(user, sellerId)));
     }
 }

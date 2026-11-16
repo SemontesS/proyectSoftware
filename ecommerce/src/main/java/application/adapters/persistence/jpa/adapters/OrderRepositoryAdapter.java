@@ -47,6 +47,11 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     }
 
     @Override
+    public List<Order> findAll() {
+        return repository.findAll(org.springframework.data.domain.Sort.by("id")).stream().map(OrderJpaMapper::toDomain).toList();
+    }
+
+    @Override
     public Map<OrderStatus, Long> countByStatus() {
         Map<OrderStatus, Long> counts = new EnumMap<>(OrderStatus.class);
         for (Object[] row : repository.countGroupedByStatus()) {

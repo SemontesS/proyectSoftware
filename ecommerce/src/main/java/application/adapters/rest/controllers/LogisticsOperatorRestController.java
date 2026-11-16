@@ -187,4 +187,9 @@ public class LogisticsOperatorRestController {
                                                            @PathVariable Long returnId) {
         return ResponseEntity.ok(ReturnRestMapper.toReturnDTO(logisticsPort.receiveReturn(user, returnId)));
     }
+
+    @GetMapping("/returns")
+    public ResponseEntity<List<ReturnResponseDTO>> returns(@AuthenticationPrincipal(expression = "user") User user) {
+        return ResponseEntity.ok(ReturnRestMapper.toReturnDTOs(logisticsPort.consultReturns(user)));
+    }
 }

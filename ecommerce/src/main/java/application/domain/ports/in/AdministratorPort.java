@@ -1,5 +1,8 @@
 package application.domain.ports.in;
 
+import application.domain.models.User;
+import application.domain.models.SellerSalesReport;
+import application.domain.models.Return;
 import application.domain.valueobjects.AuditEntityType;
 import application.domain.models.*;
 import application.domain.valueobjects.*;
@@ -74,4 +77,8 @@ public interface AdministratorPort {
     AdministrativeReport consultAdministrativeReport(User requestingUser);
     List<AuditLog> consultAuditLogByUser(User requestingUser, Long userId);
     List<AuditLog> consultAuditLogByEntity(User requestingUser, AuditEntityType entityType, Long entityId);
+
+    List<Return> consultReturns(User requestingUser);
+
+    SellerSalesReport consultSellerSalesReport(User requestingUser, Long sellerId);
 }

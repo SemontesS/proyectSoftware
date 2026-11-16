@@ -1,5 +1,8 @@
 package application.domain.ports.in;
 
+import application.domain.models.User;
+import application.domain.models.SellerSalesReport;
+import application.domain.models.Return;
 import application.domain.models.*;
 import application.domain.valueobjects.*;
 
@@ -31,4 +34,9 @@ public interface SellerPort {
 
     // Orders
     Order consultOrder(User requestingUser, Long orderId);
+
+    // Returns and reports
+    List<Return> consultReturns(User requestingUser);
+
+    SellerSalesReport consultSalesReport(User requestingUser);
 }

@@ -5,12 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 /** Last-issued counter per entity type; the domain needs every ID before the entity is saved. */
 @Entity
 @Table(name = "id_sequences")

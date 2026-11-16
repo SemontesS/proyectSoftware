@@ -12,8 +12,14 @@ public final class ReturnRestMapper {
 
     public static ReturnResponseDTO toReturnDTO(Return returnRequest) {
         return new ReturnResponseDTO(returnRequest.getReturnId(), returnRequest.getOrderId(),
+                returnRequest.getProductId(), returnRequest.getSku().value(), returnRequest.getSellerId(),
+                returnRequest.getQuantity().value(),
                 returnRequest.getReason(), returnRequest.getDate(), returnRequest.getStatus().name(),
                 returnRequest.getRefund().map(ReturnRestMapper::toRefundDTO).orElse(null));
+    }
+
+    public static java.util.List<ReturnResponseDTO> toReturnDTOs(java.util.List<Return> returns) {
+        return returns.stream().map(ReturnRestMapper::toReturnDTO).toList();
     }
 
     public static RefundResponseDTO toRefundDTO(Refund refund) {

@@ -184,7 +184,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             logisticsPort.dispatchShipment(logistics, shipment.getShipmentId());
             logisticsPort.confirmDelivery(logistics, shipment.getShipmentId());
         }
-        buyerPort.requestReturn(ana, orderA.getOrderId(), "El producto no cumple mis expectativas");
+        buyerPort.requestReturn(ana, orderA.getOrderId(), laptop.getProductId(), new Sku("LAP14-8GB"), "El producto no cumple mis expectativas");
 
         // ---- Order B (Luis): paid, shipment being prepared ----
         buyerPort.addProductToCart(luis, shirt.getProductId(), new Sku("CAM-M-AZ"), 2);
@@ -202,9 +202,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         Order orderD = buyerPort.createOrder(luis);
         buyerPort.payOrder(luis, orderD.getOrderId());
         buyerPort.generateInvoice(luis, orderD.getOrderId());
-        Return returnD = buyerPort.requestReturn(luis, orderD.getOrderId(), "Compre el curso dos veces");
+        Return returnD = buyerPort.requestReturn(luis, orderD.getOrderId(), course.getProductId(), new Sku("CURSO-JAVA"), "Compre el curso dos veces");
         logisticsPort.receiveReturn(logistics, returnD.getReturnId());
-        administratorPort.generateRefund(admin, returnD.getReturnId(), cop(120_000));
+        administratorPort.generateRefund(admin, returnD.getReturnId(), null);
 
         // ---- Order E (Luis): shipped, waiting for the delivery confirmation ----
         buyerPort.addProductToCart(luis, laptop.getProductId(), new Sku("LAP14-16GB"), 1);

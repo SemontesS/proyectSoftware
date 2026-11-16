@@ -1,5 +1,8 @@
 package application.domain.ports.in;
 
+import application.domain.valueobjects.Sku;
+import application.domain.models.User;
+import application.domain.models.Return;
 import application.domain.models.*;
 import application.domain.valueobjects.*;
 
@@ -36,5 +39,7 @@ public interface BuyerPort {
     List<Shipment> consultShipmentsByOrder(User requestingUser, Long orderId);
 
     // Returns
-    Return requestReturn(User requestingUser, Long orderId, String reason);
+    Return requestReturn(User requestingUser, Long orderId, Long productId, Sku sku, String reason);
+
+    List<Return> consultMyReturns(User requestingUser);
 }
